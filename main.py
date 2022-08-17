@@ -1,4 +1,5 @@
 from flask import *
+from handle_apikeys import validate
 import json, time
 
 app = Flask(__name__)
@@ -23,4 +24,5 @@ def request_page():
 
 
 if __name__ == "__main__":
+    validate("a")
     app.run(port=7777)
