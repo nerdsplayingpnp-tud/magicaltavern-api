@@ -1,3 +1,6 @@
+# Conceal data directory
+data/*
+
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm+all,visualstudiocode,macos,windows,linux,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm+all,visualstudiocode,macos,windows,linux,flask
 
@@ -323,6 +326,7 @@ fabric.properties
 .ionide
 
 # Support for Project snippet scope
+.vscode
 .vscode/*.code-snippets
 
 # Ignore code-workspaces
