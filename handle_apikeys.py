@@ -45,5 +45,5 @@ def put(key: str) -> None:
         print("Consider using longer keys for safety!")
     with open("data/keys.txt", mode="a", encoding="utf8") as keyfile:
         keyfile.write(key)
-        keyfile.write("\n")
+        keyfile.write("\n")  # Newline, so that every key is put into a new line :3
     keyfile.close()
