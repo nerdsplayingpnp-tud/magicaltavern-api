@@ -4,7 +4,15 @@ from pathlib import Path
 
 def _ensurepaths() -> None:
     """_ensurepaths is called to ensure that the directory data/ and the file data/keys.txt exist."""
-    Path("data/keys.txt").touch(exist_ok=True)
+    file = "data/keys.txt"
+    # From the String "file", cut off everything before the name of the file (so that you have)
+    # a directory. The part we want is EVERYTHING BEFORE the last '/'),
+    # check if this directory exists, and if it doesn't: create it!
+    Path(file[0 : file.rfind("/")]).mkdir(parents=True, exist_ok=True)
+    # Then proceed to create the file in the directory.
+    file_path = Path(file)
+    if not file_path.is_file():
+        file_path.touch(exist_ok=True)
 
 
 def validate(key: str) -> bool:
