@@ -41,6 +41,6 @@ if __name__ == "__main__":
     example_data = {"name": "yes", "players": 3542343}
     validate("a")
     campaigns = Database(make_file("data/db/campaigns.json"))
-    campaigns.set_key(example_data, 2)
+    campaigns.set_key(example_data)
     print(campaigns.get_key("1"))
     app.run(port=7777)
