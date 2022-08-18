@@ -1,4 +1,5 @@
 import json
+import random
 from pathlib import Path
 
 
@@ -54,7 +55,15 @@ class Database:
         self._validate_cache()
         # If no key attribute has been given, use auto-incrementing values.
         if key == None:
-            key = len(self.cache.keys()) + 1
+            while True:
+                random.seed()
+                key = str(random.randint(0, 9))
+                for i in range(5):
+                    random.seed()
+                    key = str(key) + str(random.randint(0, 9))
+                if key not in self.cache.keys():
+                    print("success")
+                    break
         # Key needs to be a string
         key = str(key)
         # Put the data where it belongs. Either as a new entry, or by updating an existing entry.
