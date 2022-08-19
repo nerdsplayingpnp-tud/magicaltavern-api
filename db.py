@@ -30,6 +30,11 @@ def make_file(file: str) -> Path:
 
 class Database:
     def __init__(self, file: Path) -> None:
+        """A Database object represents a (unique), cached connection to a database file.
+
+        Args:
+            file (Path): a pathlib.Path to the database file. Must be a .json file.
+        """
         self.file = file
         # We are using self-made memory caching! Hopefully it makes sense...
         self.cache_valid: bool = False
@@ -44,6 +49,14 @@ class Database:
                 self.cache_valid = True
 
     def get_key(self, key: int) -> any:
+        """Gets the value of the given key in the database file, if the key exists.
+
+        Args:
+            key (int): The key, whose value should be returned.
+
+        Returns:
+            any: The value assigned to the key.
+        """
         # Key needs to be a string
         key = str(key)
         # If the cache is valid: Return the cached value that belongs to the key.
@@ -51,10 +64,33 @@ class Database:
         self._validate_cache()
         return self.cache.get(key)
 
+    def get_all(self) -> any:
+        """Get all the key: value pairs from the database file.
+
+        Returns:
+            any: key: value pairs from the database file.
+        """
+        # If the cache is valid: Return the cached value that belongs to the key.
+        # If it is not valid: Re-validate cache and then get the value that belongs to the key.
+        self._validate_cache()
+        return self.cache
+
     def set_key(self, data: any, key: int = None) -> bool:
+        """Add a new key: value pair to the database file, if the 'key' parameter is either left empty
+        or if the 'key' parameter doesn't exist in the database yet. Update an existing key: value
+        pair in the database, if the specified 'key' parameter already exists. If the 'key'
+        parameter is left empty, a 'random' 6-digit-number that does not already exist in the
+        database will be used as a key.
+        Args:
+            data (any): Any data that can be stored as a json value.
+            key (int, optional): Optional key parameter. Defaults to None.
+
+        Returns:
+            bool: True, if operation successful.
+        """
         self._validate_cache()
         # If no key attribute has been given, use auto-incrementing values.
-        if key == None:
+        if key is None:
             random.seed()
             while True:
                 key = str(random.randint(0, 9))
@@ -62,15 +98,14 @@ class Database:
                     key = key + str(random.randint(0, 9))
                 if key not in self.cache.keys():
                     break
-        # Key needs to be a string
+        # Key needs to be a string. Typecast is necessary, if key is given as function parameter.
         key = str(key)
         # Put the data where it belongs. Either as a new entry, or by updating an existing entry.
-        self.cache.update({key: data})
+        db = self.cache
+        db.update({key: data})
         with open(self.file, mode="w", encoding="utf8") as database_file:
             # Write changes to disk.
-            json.dump(self.cache, database_file)
-        # Invalidate cache, just to be sure that the cached information is always correct.
-        # TODO: Check, if this is even necessary. The cache also gets updated in line 61, so
-        # we should not have to do this.
+            json.dump(db, database_file)
+        # Invalidate cache, since the data on the disk has changed.
         self.cache_valid = False
         return True
