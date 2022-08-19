@@ -37,16 +37,16 @@ class Database:
         """
         self.file = file
         # We are using self-made memory caching! Hopefully it makes sense...
-        self.cache_valid: bool = False
-        self.cache: dict = {}
+        self.__cache_valid: bool = False
+        self.__cache: dict = {}
 
-    def _validate_cache(self):
+    def __validate_cache(self):
         # If the cache isn't valid anymore: Revalidate it by acquiring the data from disk.
-        if not self.cache_valid:
+        if not self.__cache_valid:
             with open(self.file, mode="r", encoding="utf8") as database_file:
-                self.cache = json.load(database_file)
+                self.__cache = json.load(database_file)
                 database_file.close()
-                self.cache_valid = True
+                self.__cache_valid = True
 
     def get_key(self, key: int) -> any:
         """Gets the value of the given key in the database file, if the key exists.
@@ -61,8 +61,8 @@ class Database:
         key = str(key)
         # If the cache is valid: Return the cached value that belongs to the key.
         # If it is not valid: Re-validate cache and then get the value that belongs to the key.
-        self._validate_cache()
-        return self.cache.get(key)
+        self.__validate_cache()
+        return self.__cache.get(key)
 
     def get_all(self) -> any:
         """Get all the key: value pairs from the database file.
@@ -72,10 +72,10 @@ class Database:
         """
         # If the cache is valid: Return the cached value that belongs to the key.
         # If it is not valid: Re-validate cache and then get the value that belongs to the key.
-        self._validate_cache()
-        return self.cache
+        self.__validate_cache()
+        return self.__cache
 
-    def set_key(self, data: any, key: int = None) -> bool:
+    def set_key(self, data: any, key: int = None) -> str:
         """Add a new key: value pair to the database file, if the 'key' parameter is either left empty
         or if the 'key' parameter doesn't exist in the database yet. Update an existing key: value
         pair in the database, if the specified 'key' parameter already exists. If the 'key'
@@ -86,9 +86,9 @@ class Database:
             key (int, optional): Optional key parameter. Defaults to None.
 
         Returns:
-            bool: True, if operation successful.
+            str: id of the created resource in the database.
         """
-        self._validate_cache()
+        self.__validate_cache()
         # If no key attribute has been given, use auto-incrementing values.
         if key is None:
             random.seed()
@@ -96,19 +96,19 @@ class Database:
                 key = str(random.randint(0, 9))
                 for i in range(5):
                     key = key + str(random.randint(0, 9))
-                if key not in self.cache.keys():
+                if key not in self.__cache.keys():
                     break
         # Key needs to be a string. Typecast is necessary, if key is given as function parameter.
         key = str(key)
         # Put the data where it belongs. Either as a new entry, or by updating an existing entry.
-        db = self.cache
+        db = self.__cache
         db.update({key: data})
         with open(self.file, mode="w", encoding="utf8") as database_file:
             # Write changes to disk.
-            json.dump(db, database_file)
+            json.dump(db, database_file, indent=4)
         # Invalidate cache, since the data on the disk has changed.
-        self.cache_valid = False
-        return True
+        self.__cache_valid = False
+        return key
 
     def has_key(self, key: int) -> bool:
         """Checks, if a key is present in the database file.
@@ -120,8 +120,8 @@ class Database:
             bool: True, if the key exists. False, if the key does not exist.
         """
         key = str(key)
-        self._validate_cache()
-        keys = self.cache.keys()
+        self.__validate_cache()
+        keys = self.__cache.keys()
         if key in keys:
             return True
         return False
