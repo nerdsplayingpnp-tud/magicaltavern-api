@@ -109,3 +109,19 @@ class Database:
         # Invalidate cache, since the data on the disk has changed.
         self.cache_valid = False
         return True
+
+    def has_key(self, key: int) -> bool:
+        """Checks, if a key is present in the database file.
+
+        Args:
+            key (int): The key to be checked.
+
+        Returns:
+            bool: True, if the key exists. False, if the key does not exist.
+        """
+        key = str(key)
+        self._validate_cache()
+        keys = self.cache.keys()
+        if key in keys:
+            return True
+        return False
