@@ -18,4 +18,5 @@ def home_page():
 
 
 if __name__ == "__main__":
+    put(generate())
     app.run(port=7777)

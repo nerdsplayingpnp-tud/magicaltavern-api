@@ -1,4 +1,3 @@
-import imp
 import json
 from flask import *
 from db import Database, make_file
@@ -24,7 +23,6 @@ def get_campaign(key):
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
 def set_campaign():
     key = request.args.get("id")
-    print("Entering the FUNK 🪩🕺")
     data_required = {
         "name": request.json["name"],
         "dungeon_master": request.json["dungeon_master"],
