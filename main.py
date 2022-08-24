@@ -1,4 +1,3 @@
-from crypt import methods
 from flask import *
 from flask import Flask, render_template
 from handle_apikeys import generate, validate, put
@@ -22,11 +21,20 @@ def index():
     return render_template('index.html')
     
 @app.route('/campaigns')
-def index():
+def campaign():
     #get campaigns 
     campaings = [{'title' : 'Campaign_One'},{'title' :'Campaign_two'}]
     return render_template('campaigns.html', messages = campaings)
 
+@app.route('/mentor')
+def mentor():
+    return render_template('dm_mentor.html')
+
+@app.route('/impressum')
+def impressum():
+    return render_template('impressum.html')
+
 if __name__ == "__main__":
     validate(None)  #    Ensures that keys.txt exists.
     app.run(port=7777)
+

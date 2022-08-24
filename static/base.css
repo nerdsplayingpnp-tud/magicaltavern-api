@@ -181,13 +181,13 @@ footer div{
 }
 
 
-
 /* When the screen is less than 1210 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
 @media screen and (max-width: 1210px) {
     .topnav a.item {display: none;}
     .topnav a.icon {
         float: right;
         display: block;
+        padding: 80px 16px;
     }
     .logo-image{
         position: relative;
@@ -207,6 +207,7 @@ footer div{
         position: absolute;
         right: 0;
         top: 0;
+        padding: 80px 16px;
     }
     .topnav.responsive a {
         float: none;
