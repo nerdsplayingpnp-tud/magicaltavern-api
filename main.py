@@ -81,6 +81,5 @@ def impressum_page():
     return render_template('impressum.html')
 
 if __name__ == "__main__":
-    validate(None)  #    Ensures that keys.txt exists.
+    put(generate())
     app.run(port=7777)
-
