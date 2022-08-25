@@ -18,5 +18,5 @@ def home_page():
 
 
 if __name__ == "__main__":
-    validate()  #    Ensures that keys.txt exists.
+    validate(None)  #    Ensures that keys.txt exists.
     app.run(port=7777)

@@ -20,6 +20,26 @@ def get_campaign(key):
     abort(404)
 
 
+@campaigns_api.route("/api/v1.0/campaigns/<int:key>/", methods=["PUT"])
+def toggle_player(key):
+    #   We update the player list and count by modifying an in-memory clone of the requested
+    #   key-value-pair, and then updating the database when we are done. This saves disk activity.
+    #   I think.
+    request_player = str(request.args.get("player"))
+    campaign: dict = db_campaigns.get_key(key)
+    campaign_players: list = campaign["players"]
+    campaign_players_count: int = campaign["players_current"]
+    if request_player in campaign_players:
+        campaign_players.remove(request_player)
+        campaign.update({"players": campaign_players})
+        campaign.update({"players_current": campaign_players_count - 1})
+    else:
+        campaign_players.append(request_player)
+        campaign.update({"players": campaign_players})
+        campaign.update({"players_current": campaign_players_count + 1})
+    return json.dumps(db_campaigns.set_key(campaign, key), indent=4)
+
+
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
 def set_campaign():
     key = request.args.get("id")
