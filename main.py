@@ -18,5 +18,5 @@ def home_page():
 
 
 if __name__ == "__main__":
-    put(generate())
+    validate()  #    Ensures that keys.txt exists.
     app.run(port=7777)
