@@ -33,11 +33,15 @@ def toggle_player(key):
         campaign_players.remove(request_player)
         campaign.update({"players": campaign_players})
         campaign.update({"players_current": campaign_players_count - 1})
+        db_campaigns.set_key(campaign, key)
+        return True
     else:
         campaign_players.append(request_player)
         campaign.update({"players": campaign_players})
         campaign.update({"players_current": campaign_players_count + 1})
-    return json.dumps(db_campaigns.set_key(campaign, key), indent=4)
+        db_campaigns.set_key(campaign, key)
+        return False
+    return
 
 
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
