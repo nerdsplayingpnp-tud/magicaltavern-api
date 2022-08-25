@@ -1,36 +1,93 @@
 {% extends 'base.html' %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
 {% block content %}
 
-<h1>Campaigns</h1>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
+<h1 style="padding-bottom: 5px;">Campaigns</h1>
 
     {% for message in messages %}
         <div class='campaign'>
-            <h3>{{ message['title'] }}</h3>
+            
+            <table class="table">
+              <thead class='tablehead'>
+                <tr>
+                    <th style ="width : 15%"><h2>{{ message['name'] }}</h2></th>
+                </tr>
+                </thead>
+              <tbody>
+                <tr>
+                <th scope="row">Dungeonmaster: </th>
+                  <td>{{ message['dungeon_master'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Beschreibung: </th>
+                  <td>{{ message['description'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Players Min: </th>
+                  <td>{{ message['players_min'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Players Max: </th>
+                  <td>{{ message['players_max'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Complexity: </th>
+                  <td>{{ message['complexity'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Place: </th>
+                  <td>{{ message['place'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Time: </th>
+                  <td>{{ message['time'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Content Warnings: </th>
+                  <td>{{ message['content_warnings'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Ruleset: </th>
+                  <td>{{ message['ruleset'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Campaign Length: </th>
+                  <td>{{ message['campaign_length'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Language: </th>
+                  <td>{{ message['language'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Character Creation: </th>
+                  <td>{{ message['character_creation'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Briefing: </th>
+                  <td>{{ message['briefing'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Notes: </th>
+                  <td>{{ message['notes'] }}</td>
+                </tr>
+                <tr>
+                  <form action="{{ url_for('campaign_page') }}" method="post">
+                  <td><button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Sign up for this campaign
+                  </button></td>
+                <td>
+                  <label for="email">Enter your Email</label>
+                  <br>
+                  <input type="email" id="email" size="30" required>
+      </form>
+      </td>
+                </tr>
+               
+              </tbody>
+            </table>
+  
+              
+              
+            </section>
         </div>
           
         

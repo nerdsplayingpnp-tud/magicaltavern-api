@@ -19,7 +19,6 @@ def get_campaign(key):
         return db_campaigns.get_key(key)
     abort(404)
 
-
 @campaigns_api.route("/api/v1.0/campaigns/<int:key>/", methods=["PUT"])
 def toggle_player(key):
     #   We update the player list and count by modifying an in-memory clone of the requested
@@ -39,7 +38,7 @@ def toggle_player(key):
         campaign.update({"players_current": campaign_players_count + 1})
     return json.dumps(db_campaigns.set_key(campaign, key), indent=4)
 
-
+    
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
 def set_campaign():
     key = request.args.get("id")

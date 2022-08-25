@@ -96,11 +96,11 @@ ul {
 
 .Blocktext{
     padding: 15px;
-    column-count: 3;
-    border: solid #aaaaaa;
-    border-width: 2px;
-    border-top: solid #04AA6D;
-    border-top-width:1px;
+    column-count: 1;
+    border: solid #016bf5;
+    border-width: 3px;
+    border-top: solid #0742c0;
+    border-top-width:2px;
 }
 
 .link-lorem-ipsum{
@@ -111,57 +111,34 @@ ul {
     text-decoration: none;
 }
 
+.campaign{
+    padding-top: 10px;
+    border-top:3px solid #1100fa
+}
 
 /*----------------------------------------------------------------------------------*/
 /* Next section is regarding table and its content*/
 
 table{
-    border-bottom:1px solid #e5e5e5;
+    border:3px solid #2500fa;
     text-align: left;
     display: table;
     width: 100%;
     border-collapse: collapse;
     overflow: visible;
 }
-table tr th{
-    border-bottom: 3px solid #888;
-}
+
 table th, table td{ /* Added padding for better layout after collapsing */
     padding: 10px 8px;
 }
 
-tbody tr:nth-child(even) {
-    background-color: #ccc;
-}
-
-#up:hover, #down:hover{
-    filter:brightness(50%);
-}
-
-/* Show/Hide-Links*/
-.sh-links, .sh-link{
-    color: #888;
-    padding-top: 20px;
-    padding-bottom:20px;
-}
-
-.sh-links-bottom{
-    padding-top: 20px;
-    padding-bottom: 50px;
-    color:#888;
-}
-
-.sh-link:hover{
-    text-decoration: none;
-    color: #32a932;
-}
 
 /*--------------------------------------------------------------*/
 /* Next section is regarding Footer and its content*/
 
 footer{
     padding-top: 5px;
-    border-top:1px solid #4acd4a;
+    border-top:1px solid #1100fa;
 
 }
 
