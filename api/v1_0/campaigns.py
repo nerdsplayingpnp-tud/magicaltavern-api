@@ -19,7 +19,6 @@ def get_campaign(key):
         return db_campaigns.get_key(key)
     abort(404)
 
-
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
 def set_campaign():
     key = request.args.get("id")
