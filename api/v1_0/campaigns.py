@@ -10,11 +10,15 @@ campaigns_api = Blueprint("campaigns_api", __name__)
 
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["GET"])
 def get_campaigns():
+    if not validate(request.args.get("apikey")):
+        abort(403)
     return jsonify(db_campaigns.get_all()), 200
 
 
 @campaigns_api.route("/api/v1.0/campaigns/<int:key>/", methods=["GET"])
 def get_campaign(key):
+    if not validate(request.args.get("apikey")):
+        abort(403)
     if db_campaigns.has_key(key):
         return db_campaigns.get_key(key)
     abort(404)
@@ -25,6 +29,8 @@ def toggle_player(key):
     #   We update the player list and count by modifying an in-memory clone of the requested
     #   key-value-pair, and then updating the database when we are done. This saves disk activity.
     #   I think.
+    if not validate(request.args.get("apikey")):
+        abort(403)
     request_player = str(request.args.get("player"))
     campaign: dict = db_campaigns.get_key(key)
     print(str(campaign))
@@ -48,6 +54,8 @@ def confirm_view(key):
     #   We update the player list and count by modifying an in-memory clone of the requested
     #   key-value-pair, and then updating the database when we are done. This saves disk activity.
     #   I think.
+    if not validate(request.args.get("apikey")):
+        abort(403)
     campaign: dict = db_campaigns.get_key(key)
     if "has_view" in campaign.keys():
         campaign.update({"has_view": True})
@@ -59,6 +67,8 @@ def confirm_view(key):
 
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
 def set_campaign():
+    if not validate(request.args.get("apikey")):
+        abort(403)
     key = request.args.get("id")
     data_required = {
         "name": request.json["name"],
@@ -81,7 +91,7 @@ def set_campaign():
         abort(400)
 
     for key_required in data_required.keys():
-        if key_required not in request.json or not validate(request.args.get("apikey")):
+        if key_required not in request.json:
             abort(400)
 
     data_optional_or_preset = {
