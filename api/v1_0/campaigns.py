@@ -20,13 +20,14 @@ def get_campaign(key):
     abort(404)
 
 
-@campaigns_api.route("/api/v1.0/campaigns/<int:key>/", methods=["PUT"])
+@campaigns_api.route("/api/v1.0/campaigns/<int:key>/player/", methods=["PUT"])
 def toggle_player(key):
     #   We update the player list and count by modifying an in-memory clone of the requested
     #   key-value-pair, and then updating the database when we are done. This saves disk activity.
     #   I think.
     request_player = str(request.args.get("player"))
     campaign: dict = db_campaigns.get_key(key)
+    print(str(campaign))
     campaign_players: list = campaign["players"]
     campaign_players_count: int = campaign["players_current"]
     if request_player in campaign_players:
@@ -34,14 +35,26 @@ def toggle_player(key):
         campaign.update({"players": campaign_players})
         campaign.update({"players_current": campaign_players_count - 1})
         db_campaigns.set_key(campaign, key)
-        return True
+        return "True"
     else:
         campaign_players.append(request_player)
         campaign.update({"players": campaign_players})
         campaign.update({"players_current": campaign_players_count + 1})
         db_campaigns.set_key(campaign, key)
-        return False
-    return
+        return "False"
+
+@campaigns_api.route("/api/v1.0/campaigns/<int:key>/has_view/", methods=["PUT"])
+def confirm_view(key):
+    #   We update the player list and count by modifying an in-memory clone of the requested
+    #   key-value-pair, and then updating the database when we are done. This saves disk activity.
+    #   I think.
+    campaign: dict = db_campaigns.get_key(key)
+    if "has_view" in campaign.keys():
+        campaign.update({"has_view": True})
+        return jsonify(True)
+    else:
+        campaign.update({"has_view": False})
+        return jsonify(False)
 
 
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
@@ -75,8 +88,8 @@ def set_campaign():
         "image_url": request.json.get("image_url", ""),
         "players_current": 0,
         "players": [],
+        "has_view": False,
     }
 
-    return json.dumps(
-        db_campaigns.set_key((data_required | data_optional_or_preset), key), indent=4
-    )
+    return_value = db_campaigns.set_key((data_required | data_optional_or_preset), key)  
+    return jsonify(return_value)
