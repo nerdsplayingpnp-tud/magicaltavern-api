@@ -42,11 +42,14 @@ def toggle_player(key):
         db_campaigns.set_key(campaign, key)
         return "True"
     else:
+        if campaign_players_count + 1 > campaign["players_max"]:
+            abort(409, description="Too many players in this campaign.")
         campaign_players.append(request_player)
         campaign.update({"players": campaign_players})
         campaign.update({"players_current": campaign_players_count + 1})
         db_campaigns.set_key(campaign, key)
         return "False"
+
 
 @campaigns_api.route("/api/v1.0/campaigns/<int:key>/has_view/", methods=["PUT"])
 def confirm_view(key):
@@ -100,5 +103,5 @@ def set_campaign():
         "has_view": False,
     }
 
-    return_value = db_campaigns.set_key((data_required | data_optional_or_preset), key)  
+    return_value = db_campaigns.set_key((data_required | data_optional_or_preset), key)
     return jsonify(return_value)
