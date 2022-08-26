@@ -1,7 +1,6 @@
-import json
 from flask import *
 from db import Database, make_file
-from handle_apikeys import *
+from handle_apikeys import validate
 
 db_campaigns = Database(make_file("data/db/campaigns.json"))
 
@@ -20,7 +19,7 @@ def get_campaign(key):
     if not validate(request.args.get("apikey")):
         abort(403)
     if db_campaigns.has_key(key):
-        return db_campaigns.get_key(key)
+        return db_campaigns.get_key(key), 200
     abort(404)
 
 
