@@ -4,11 +4,13 @@ from handle_apikeys import generate, validate, put
 from pathlib import Path
 from db import Database, make_file
 from api.v1_0.campaigns import campaigns_api
+from api.v1_0.message_keys import message_keys
 import json, time
 
 app = Flask(__name__)
 # Register the blueprint in api/v1_0/campaigns.py
 app.register_blueprint(campaigns_api)
+app.register_blueprint(message_keys)
 
 
 # Register a route
