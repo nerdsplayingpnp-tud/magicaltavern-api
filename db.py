@@ -64,7 +64,7 @@ class Database:
         self.__validate_cache()
         return self.__cache.get(key)
 
-    def get_all(self) -> any:
+    def get_all(self) -> dict:
         """Get all the key: value pairs from the database file.
 
         Returns:
