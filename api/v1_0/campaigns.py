@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import *
 from db import Database, make_file
 from handle_apikeys import validate
@@ -105,3 +106,15 @@ def set_campaign():
 
     return_value = db_campaigns.set_key((data_required | data_optional_or_preset), key)
     return jsonify(return_value)
+
+
+@campaigns_api.route("/api/v1.0/campaigns/dm/<int:id>/", methods=["GET"])
+def get_where_dm(id):
+    if not validate(request.args.get("apikey")):
+        abort(403)
+    campaigns_all = db_campaigns.get_all()
+    campaigns_dm = []
+    for key in campaigns_all.keys():
+        if campaigns_all[key]["dungeon_master"] == id:
+            campaigns_dm.append(key)
+    return jsonify(campaigns_dm), 200
