@@ -70,17 +70,22 @@
                   <td>{{ message['notes'] }}</td>
                 </tr>
                 <tr>
-                  <form action="{{ url_for('campaign_page') }}" method="post">
-                
-                
-                  <td><button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Sign up for this campaign
-                  </button></td>
-                <td>
-                  <label for="email">Enter your Email</label>
-                  <br>
-                  <input type="email" id="email" size="30" required>
-      </form>
+                  <form action="{{ url_for('validate') }}" method="post">
+                    <td>
+                      <input type="submit">
+                      <br>
+                      Sign up for this campaign
+                  </td>
+                  <td>
+                    <label for="email">Enter your Email</label>
+                    <br>
+                    <input name="email" type="email" id="email" size="30" required placeholder="yourEmail@something.com">
+                  </td>
+                    
+                  </form>
+                      
+                    
+              
       </td>
                 </tr>
                
