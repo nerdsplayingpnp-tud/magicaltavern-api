@@ -1,9 +1,9 @@
 from wsgiref.util import request_uri
 from flask import *
-
+from werkzeug.security import generate_password_hash
 from flask_login import LoginManager
 from flask_mail import Mail, Message
-from handle_apikeys import generate, validate, put
+from handle_apikeys import generate, put
 from pathlib import Path
 from db import Database, make_file
 import json, time
@@ -48,7 +48,41 @@ def confirm_Email(token):
     flash('Your Email has been confirmed!')
     return  redirect(url_for('auth.login'))
 
+@app.route('/reset_password/<token>', methods=["GET","POST"])
+def resetPassword(token):
+    if request.method == 'GET':
+    #verify token
+        try:
+                s = URLSafeTimedSerializer(
+                    current_app.config["SECRET_KEY"], salt="password-reset"
+                )
+                email = s.loads(token, salt="password-reset", max_age=3600)
+        except (SignatureExpired, BadSignature):
+                return render_template("error.html")
+        user = User.query.filter_by(email=email).first()
+        return  render_template('reset_password.html', token=token)
+    if request.method == 'POST':
+        password = request.form.get('password')
+        passwordConfirm = request.form.get('passwordConfirm')
+        try:
+            s = URLSafeTimedSerializer(
+                current_app.config["SECRET_KEY"], salt="password-reset"
+            )
+            email = s.loads(token, salt="password-reset", max_age=3600)
+        except (SignatureExpired, BadSignature):
+            return render_template("error.html")
+        if password == passwordConfirm:
+            user = User.query.filter_by(email=email).first()
+            user.password = generate_password_hash(password, method='sha256')
+            db.session.commit()
+        else:
+            flash('Passwords werent the same!')
+            return  redirect('/reset_password/' + token)
+        flash('New Password has been set')
+        return redirect(url_for('auth.login'))
+
 #@app.route('/validate', methods=["POST"])
+#no reason right now for this to be callable from outside
 def validate(email):
     s = URLSafeTimedSerializer(
             current_app.config["SECRET_KEY"], salt="email-comfirm"
@@ -58,6 +92,23 @@ def validate(email):
     msg.body = "Hello Adventurer, ready for your next Adventure? Click the link to confirm your Email: " + request.url_root + url_for('confirm_Email', token = token)
     mail.send(msg)
     return None
+
+@app.route('/reset_password', methods=['POST', 'GET'])
+def reset_password_mail():
+    if request.method == 'GET':
+        return render_template('reset_password_mail.html')
+    if request.method == 'POST':
+        email = request.form.get('email')
+        s = URLSafeTimedSerializer(
+                current_app.config["SECRET_KEY"], salt="password-reset"
+            )
+        token = s.dumps(email, salt="password-reset")
+        msg = Message('PnP Email Authentication', sender =   ("Nerds Play PnP", 'nerdsplaypnpvalidator@gmail.com'), recipients = [email])
+        msg.body = "Hello Adventurer, click the link to reset your password:" + request.url_root + url_for('resetPassword', token = token)
+        mail.send(msg)
+        flash('Please check your Inbox')
+        return redirect(url_for('auth.login'))
+    
 
 from api.v1_0.models import User
 @login_manager.user_loader
