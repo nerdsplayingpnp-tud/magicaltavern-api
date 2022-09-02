@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 style="padding-bottom: 5px;">Campaigns</h1>
+
+        <div class='admin'>
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div class="notification">
+            {{ messages[0] }}. 
+          </div>
+          {% endif %}
+          {% endwith %}
+            <table class="table">
+              <thead class='tablehead'>
+                <tr>
+                    <th><h2>Users</h2></th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Access-Level (0-3)</th>
+                </tr>
+                </thead>
+              <tbody>
+            {% for user in users %}
+                <tr>
+                    <th scope="row">User: </th>
+                    <td>{{ user['id'] }}</td>
+                    <td>{{ user['name'] }}</td>
+                    <td>{{ user['email'] }}</td>
+                    <td>{{ user['access'] }}</td>
+                </tr>
+            {% endfor %}
+              </tbody>
+            </table>
+  
+              
+              
+            </section>
+        </div>
+          
+        
+   
+{% endblock %}

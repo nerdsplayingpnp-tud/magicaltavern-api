@@ -27,7 +27,9 @@ def login_post():
         flash('Please check Inbox to confirm your Email address')
         validate(email)
         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
-
+    if user.is_guest():
+        flash('Please sign up')
+        return redirect(url_for('auth.signup')) # if the user doesn't exist or password is wrong, reload the page
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
     return redirect('/profile')
@@ -45,21 +47,31 @@ def signup_post():
     user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
 
     if user: # if a user is found, we want to redirect back to signup page so user can try again
+        if user.is_guest():
+            user = User.query.filter_by(email=email).first()
+            user.password = generate_password_hash(password, method='sha256')
+            user.name = name
+            user.access = 1
+            db.session.commit()
+            if user.email_confirm:
+                validate(email)
+                flash('Please check your Inbox')
+            return redirect(url_for('auth.signup'))
+    # create a new user with the form data. Hash the password so the plaintext version isn't saved.
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
-    new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), email_confirm = False)
+    if email == 'hildebrandt.julian@googlemail.com':
+        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), email_confirm = False, access = 3)
+    else:
+        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), email_confirm = False, access = 1)
     db.session.add(new_user)
     db.session.commit()
     validate(email)
     # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-    return redirect(url_for('auth.confirm_mail'))
+    flash('Please check your Inbox')
+    return redirect(url_for('auth.signup'))
     
 
-
-@auth.route('/confirm_mail')
-def confirm_mail():
-    logout_user()
-    return render_template('confirm_mail.html')
 
 @auth.route('/logout')
 @login_required

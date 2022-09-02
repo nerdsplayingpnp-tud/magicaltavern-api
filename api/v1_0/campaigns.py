@@ -2,6 +2,7 @@ import json
 from flask import *
 from db import Database, make_file
 from handle_apikeys import *
+from flask_login import current_user
 
 db_campaigns = Database(make_file("data/db/campaigns.json"))
 
@@ -28,6 +29,29 @@ def toggle_player(key):
     campaign: dict = db_campaigns.get_key(key)
     campaign_players: list = campaign["players"]
     campaign_players_count: int = campaign["players_current"]
+    if request_player in campaign_players:
+        campaign_players.remove(request_player)
+        campaign.update({"players": campaign_players})
+        campaign.update({"players_current": campaign_players_count - 1})
+    else:
+        campaign_players.append(request_player)
+        campaign.update({"players": campaign_players})
+        campaign.update({"players_current": campaign_players_count + 1})
+    return json.dumps(db_campaigns.set_key(campaign, key), indent=4)
+
+def toggle_player_web(key):
+    #Another version is needed for the website logic (i think)
+    campaign: dict = db_campaigns.get_key(key)
+    campaign_players: list = campaign["players"]
+    campaign_players_count: int = campaign["players_current"]
+   
+    #check if user is guest and the email should be used for identification
+    if current_user.is_guest():
+        request_player = current_user.email
+    else:
+        #may soon be used to have registered users sign in with username but not yet
+        request_player = current_user.email
+  
     if request_player in campaign_players:
         campaign_players.remove(request_player)
         campaign.update({"players": campaign_players})

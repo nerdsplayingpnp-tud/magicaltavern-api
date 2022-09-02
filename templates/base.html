@@ -54,6 +54,22 @@
                         Impressum
                     </a>
                 </li>
+                {% if current_user.is_authenticated and current_user.is_dm() %}
+                <li>
+                    <a href="/DmPage" class="item">
+                        <i class="fas fa-print"></i>
+                        Dungeonmaster Page
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.is_admin() %}
+                <li>
+                    <a href="/AdminPage" class="item">
+                        <i class="fas fa-print"></i>
+                        Admin Page
+                    </a>
+                </li>
+                {% endif %}
                 {% if current_user.is_authenticated %}
                 <li>
                     <a href="/profile" class="item">
@@ -102,7 +118,5 @@
         <p>This solution has been created for<br>Nerds Play PnP</p>
     </div>
 </footer>
-
-
 </body>
 </html>

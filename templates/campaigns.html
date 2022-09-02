@@ -3,74 +3,102 @@
 
 <h1 style="padding-bottom: 5px;">Campaigns</h1>
 
-    {% for message in messages %}
+    {% for campaign in campaigns %}
         <div class='campaign'>
-            
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <div class="notification">
+            {{ messages[0] }}. 
+          </div>
+          {% endif %}
+          {% endwith %}
             <table class="table">
               <thead class='tablehead'>
                 <tr>
-                    <th style ="width : 15%"><h2>{{ message['name'] }}</h2></th>
+                    <th style ="width : 15%"><h2>{{ campaign['name'] }}</h2></th>
                 </tr>
                 </thead>
               <tbody>
                 <tr>
                 <th scope="row">Dungeonmaster: </th>
-                  <td>{{ message['dungeon_master'] }}</td>
+                  <td>{{ campaign['dungeon_master'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Beschreibung: </th>
-                  <td>{{ message['description'] }}</td>
+                  <td>{{ campaign['description'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Players Min: </th>
-                  <td>{{ message['players_min'] }}</td>
+                  <td>{{ campaign['players_min'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Players Max: </th>
-                  <td>{{ message['players_max'] }}</td>
+                  <td>{{ campaign['players_max'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Complexity: </th>
-                  <td>{{ message['complexity'] }}</td>
+                  <td>{{ campaign['complexity'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Place: </th>
-                  <td>{{ message['place'] }}</td>
+                  <td>{{ campaign['place'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Time: </th>
-                  <td>{{ message['time'] }}</td>
+                  <td>{{ campaign['time'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Content Warnings: </th>
-                  <td>{{ message['content_warnings'] }}</td>
+                  <td>{{ campaign['content_warnings'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Ruleset: </th>
-                  <td>{{ message['ruleset'] }}</td>
+                  <td>{{ campaign['ruleset'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Campaign Length: </th>
-                  <td>{{ message['campaign_length'] }}</td>
+                  <td>{{ campaign['campaign_length'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Language: </th>
-                  <td>{{ message['language'] }}</td>
+                  <td>{{ campaign['language'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Character Creation: </th>
-                  <td>{{ message['character_creation'] }}</td>
+                  <td>{{ campaign['character_creation'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Briefing: </th>
-                  <td>{{ message['briefing'] }}</td>
+                  <td>{{ campaign['briefing'] }}</td>
                 </tr>
                 <tr>
                   <th scope="row">Notes: </th>
-                  <td>{{ message['notes'] }}</td>
+                  <td>{{ campaign['notes'] }}</td>
                 </tr>
                 <tr>
-                  <form action="{{ url_for('validate') }}" method="post">
+                  <th scope="row">Players: </th>
+                  <td>{{ campaign['players'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Players Currently: </th>
+                  <td>{{ campaign['players_current'] }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Key </th>
+                  <td>{{ campaign['key'] }}</td>
+                </tr>
+                <tr>
+                  {% if current_user.is_authenticated %}
+                  <form action="/signUpCampaign/{{ campaign['key'] }}" method="post">
+                    <td>
+                      <input type="submit">
+                      <br>
+                      Sign up for this campaign
+                  </td>
+                </form>
+                  {% endif %}
+                  {% if not current_user.is_authenticated %}
+                  <form action="/signUpCampaignEmail/{{ campaign['key'] }}" method="post">
                     <td>
                       <input type="submit">
                       <br>
@@ -81,6 +109,7 @@
                     <br>
                     <input name="email" type="email" id="email" size="30" required placeholder="yourEmail@something.com">
                   </td>
+                  {% endif %}
                     
                   </form>
                       

@@ -4,6 +4,7 @@ from handle_apikeys import *
 from api.v1_0.campaigns import get_campaigns, db_campaigns
 
 from flask_login import login_required, current_user
+from api.v1_0.models import User
 
 
 weblogic = Blueprint("weblogic", __name__)
@@ -15,7 +16,23 @@ def index():
 @weblogic.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', name=current_user.name)
+    return render_template('profile.html', user=current_user)
+
+    
+@weblogic.route('/DmPage')
+@login_required
+def DmPage():
+    if not current_user.is_dm():
+        return redirect(url_for('weblogic.index'))
+    return render_template('DmPage.html')
+    
+@weblogic.route('/AdminPage')
+@login_required
+def AdminPage():
+    if not current_user.is_admin():
+        return redirect(url_for('weblogic.index'))
+    users = User.query.all()
+    return render_template('AdminPage.html', users=users)
 
 
 @weblogic.route('/campaigns', methods=["GET"])
@@ -67,8 +84,10 @@ def campaign_page():
     campaigns_json = get_campaigns()[0].json
     campaings = []
     for campaign in campaigns_json:
-        campaings.append(campaigns_json[campaign])
-    return render_template('campaigns.html', messages = campaings)
+        camp = campaigns_json[campaign]
+        camp['key'] = campaign
+        campaings.append(camp)
+    return render_template('campaigns.html', campaigns = campaings)
 
 @weblogic.route('/mentor', methods=["GET"])
 def mentor_page():

@@ -136,8 +136,15 @@ To get a local development environment up and running, follow these steps.
    ```sh
    python -m pip install -r requirements.txt
    ```
-4. To test `POST`, `PUT` and `DELETE` API Calls, put an API Key into `data/keys.txt`. This key can be anything you want it to be.
-5. Start the development environment with
+4. Open pyhton in your virtual envoirenment (venv)
+  Initialize the users table for login functionality for Flask-SQLAlchemy
+  ```
+  from main import app
+  from db import dbsql
+  dbsql.create_all(app=app)
+  ```
+5. To test `POST`, `PUT` and `DELETE` API Calls, put an API Key into `data/keys.txt`. This key can be anything you want it to be.
+6. Start the development environment with
    ```sh
    python main.py
    ```

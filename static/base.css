@@ -103,6 +103,7 @@ ul {
     border-width: 3px;
     border-top: solid #0742c0;
     border-top-width:2px;
+    margin-bottom: 10px;
 }
 
 .link-lorem-ipsum{
@@ -113,9 +114,22 @@ ul {
     text-decoration: none;
 }
 
+.profile{
+    padding-top: 20px;
+    border-top:2px solid #1100fa
+}
 .campaign{
     padding-top: 10px;
     border-top:3px solid #1100fa
+}
+
+.notification{
+    margin: 10px;
+    padding: 10px;
+    border: solid #016bf5;
+    border-width: 3px;
+    border-top: solid #0742c0;
+    border-top-width:2px;
 }
 
 /*----------------------------------------------------------------------------------*/
