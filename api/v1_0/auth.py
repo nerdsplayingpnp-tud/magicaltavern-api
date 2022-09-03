@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from db import dbsql as db
 from api.v1_0.models import User
 from flask_login import login_user, login_required, logout_user
-from main import validate
+from api.v1_0.email import validate
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
