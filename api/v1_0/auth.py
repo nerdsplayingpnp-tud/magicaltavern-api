@@ -68,7 +68,7 @@ def signup_post():
     db.session.commit()
     validate(email)
     # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-    flash('Please check your Inbox')
+    flash('You need to confirm your Email in order to Sign up. Please check your Inbox')
     return redirect(url_for('auth.signup'))
     
 

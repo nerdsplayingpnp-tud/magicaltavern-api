@@ -9,7 +9,7 @@ from db import Database, make_file, dbsql as db
 import json, time
 from api.v1_0.campaigns import get_campaigns, db_campaigns, toggle_player_web
 from main import mail
-from api.v1_0.models import User
+from api.v1_0.models import User, MentorProgramm, Ruleset
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 
@@ -18,6 +18,7 @@ email = Blueprint("email", __name__)
 #email-confirm: 9XQynYwmt5kVo5Tc1GpEo9tynRWrgT
 #camp-confirm: 6iyEu3rd2O8ihz8LASX101AQBfGS8p
 #password reset: iL0dtRvkF5f5ekUy7NBLe2OJH44qfI
+#Free Salt for Whenever: ltDySgN8aeLfzGSiHitY09sFZWQTo9
 
 
 #---------------------------------------------------------------------------------------
@@ -100,9 +101,9 @@ def resetPassword(token):
         passwordConfirm = request.form.get('passwordConfirm')
         try:
             s = URLSafeTimedSerializer(
-                current_app.config["SECRET_KEY"], salt="password-reset"
+                current_app.config["SECRET_KEY"], salt="iL0dtRvkF5f5ekUy7NBLe2OJH44qfI"
             )
-            email = s.loads(token, salt="password-reset", max_age=3600)
+            email = s.loads(token, salt="iL0dtRvkF5f5ekUy7NBLe2OJH44qfI", max_age=3600)
         except (SignatureExpired, BadSignature):
             return render_template("error.html")
         if password == passwordConfirm:
@@ -127,7 +128,7 @@ def validate(email):
         )
     token = s.dumps(email, salt="9XQynYwmt5kVo5Tc1GpEo9tynRWrgT")
     msg = Message('PnP Email Authentication', sender =   ("Nerds Play PnP", 'nerdsplaypnpvalidator@gmail.com'), recipients = [email])
-    msg.body = "Hello Adventurer, to complete the signup you have to confirm your email. Click the link to confirm your Email: " + request.url_root + url_for('confirm_Email', token = token)
+    msg.body = "Hello Adventurer, to complete the signup you have to confirm your email. Click the link to confirm your Email: " + request.url_root + url_for('email.confirm_Email', token = token)
     mail.send(msg)
     return None
 
@@ -139,7 +140,7 @@ def validateNewEmail(email, id, hash):
         )
     token = s.dumps(email, salt=hash)
     msg = Message('PnP Email Authentication', sender =   ("Nerds Play PnP", 'nerdsplaypnpvalidator@gmail.com'), recipients = [email])
-    msg.body = "Hello Adventurer, to change your Email you have to confirm your new Email. Click the link to confirm your Email: " + request.url_root + url_for('confirm_new_Email', token = token, id=id)
+    msg.body = "Hello Adventurer, to change your Email you have to confirm your new Email. Click the link to confirm your Email: " + request.url_root + url_for('email.confirm_new_Email', token = token, id=id)
     mail.send(msg)
     return None
 
@@ -150,7 +151,7 @@ def validateCampaign(email, key):
         )
     token = s.dumps(email, salt="6iyEu3rd2O8ihz8LASX101AQBfGS8p")
     msg = Message('PnP Email Authentication', sender =   ("Nerds Play PnP", 'nerdsplaypnpvalidator@gmail.com'), recipients = [email])
-    msg.body = "Hello Adventurer, ready for your next Adventure? Click the link to confirm your Email: " + request.url_root + url_for('confirm_Email_campaign', token = token, key = key)
+    msg.body = "Hello Adventurer, ready for your next Adventure? Click the link to confirm your Email: " + request.url_root + url_for('email.confirm_Email_campaign', token = token, key = key)
     mail.send(msg)
     return None
 
@@ -181,12 +182,29 @@ def signUpCampaignEmail(key):
             return redirect(url_for('auth.login'))
     else:
         new_guest = User(email=email, name='guest', password=generate_password_hash('password', method='sha256'), email_confirm = False, access = 0)
-        new_guest.name = "guest" + new_guest.id
+        #new_guest.name = "guest" + new_guest.id
         db.session.add(new_guest)
         db.session.commit()
         validateCampaign(email, key)
         flash('You need to confirm your Email Address, check your inbox')
         return redirect(url_for('weblogic.campaign_page'))
+    
+
+#Signup for Campaign without account
+@email.route('/sendMailtoPlayers/<key>', methods=["POST"])
+@login_required
+def sendMailtoPlayers(key):
+    if not current_user.is_dm():
+        flash("Only Dungeonmasters have authority for this command")
+        return redirect(url_for('auth.login'))
+    text = request.form.get('text')
+    campaigns_json = get_campaigns()[0].json
+    campaign = campaigns_json[key]
+    msg = Message('Mail to all Players in ' + campaign['name'], sender =   (current_user.name + ", Gamemaster of " + campaign['name'], 'nerdsplaypnpvalidator@gmail.com'), recipients = campaign['players'])
+    msg.body = text
+    mail.send(msg)
+    flash('The Email has been sent to your players')
+    return redirect(url_for('weblogic.DmPage'))
 
 
 
@@ -201,12 +219,16 @@ def reset_password_mail():
         return render_template('reset_password_mail.html')
     if request.method == 'POST':
         email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('Email is not registered')
+            return redirect(url_for('auth.login'))
         s = URLSafeTimedSerializer(
                 current_app.config["SECRET_KEY"], salt="iL0dtRvkF5f5ekUy7NBLe2OJH44qfI"
             )
         token = s.dumps(email, salt="iL0dtRvkF5f5ekUy7NBLe2OJH44qfI")
-        msg = Message('PnP Email Authentication', sender =   ("Nerds Play PnP", 'nerdsplaypnpvalidator@gmail.com'), recipients = [email])
-        msg.body = "Hello Adventurer, click the link to reset your password:" + request.url_root + url_for('resetPassword', token = token)
+        msg = Message('PnP Reset Password', sender =   ("Nerds Play PnP", 'nerdsplaypnpvalidator@gmail.com'), recipients = [email])
+        msg.body = "Hello Adventurer, click the link to reset your password:" + request.url_root + url_for('email.resetPassword', token = token)
         mail.send(msg)
         flash('Please check your Inbox')
         return redirect(url_for('auth.login'))
@@ -259,4 +281,101 @@ def change_Email():
         flash("Please check your Inbox to confirm your new Email.")
         return redirect(url_for( 'weblogic.profile'))
 
-    
+
+@email.route('/deleteAccount', methods=['GET', 'POST'])
+@login_required
+def deleteAccount():
+    if request.method == 'GET':
+        return render_template( 'profile.html', user=current_user, deleteAccount = True)
+    if request.method == 'POST':
+        password = request.form.get('password')
+        user = User.query.filter_by(id=current_user.id).first()
+        if not check_password_hash(user.password, password):
+            flash("wrong password")
+            return redirect(url_for( 'weblogic.profile'))
+        logout_user()
+        db.session.delete(user)
+        db.session.commit()
+        return redirect(url_for( 'weblogic.index'))
+
+
+#---------------------------------------------------------------------------------------
+#Admin actions
+#---------------------------------------------------------------------------------------
+@email.route('/makeUser/<id>', methods=['POST'])
+@login_required
+def makeUser(id):
+    if not current_user.is_admin():
+        flash("You dont have a level 9 Wish..  Only Admins have access to this command")
+        return redirect(url_for('auth.login'))
+    user = User.query.filter_by(id=id).first()
+    user.access = 1
+    db.session.commit()
+    return redirect(url_for( 'weblogic.AdminPage'))
+
+@email.route('/makeDM/<id>', methods=['POST'])
+@login_required
+def makeDM(id):
+    if not current_user.is_admin():
+        flash("You dont have a level 9 Wish..  Only Admins have access to this command")
+        return redirect(url_for('auth.login'))
+    user = User.query.filter_by(id=id).first()
+    user.access = 2
+    db.session.commit()
+    return redirect(url_for( 'weblogic.AdminPage'))
+
+@email.route('/makeAdmin/<id>', methods=['POST'])
+@login_required
+def makeAdmin(id):
+    if not current_user.is_admin():
+        flash("You dont have a level 9 Wish..  Only Admins have access to this command")
+        return redirect(url_for('auth.login'))
+    user = User.query.filter_by(id=id).first()
+    user.access = 3
+    db.session.commit()
+    return redirect(url_for( 'weblogic.AdminPage'))
+
+#---------------------------------------------------------------------------------------
+#Mentor-Page Actions
+#---------------------------------------------------------------------------------------
+@email.route('/mentorPlayer', methods=['POST'])
+@login_required
+def mentorPlayer():
+    ruleset = request.form.get('ruleset')
+    format = request.form.get('format')
+    description = request.form.get('description')
+    language = request.form.get('language')
+    mentor = MentorProgramm(studentId = current_user.id, format = format ,ruleset = ruleset, description = description, language = language)
+    db.session.add(mentor)
+    db.session.commit()
+    return redirect(url_for( 'weblogic.mentor_page'))
+
+@email.route('/takeOnTrainee/<programmId>', methods=['POST'])
+@login_required
+def takeOnTrainee(programmId):
+    if not current_user.is_dm():
+        flash("You dont have the rights")
+        return redirect(url_for( 'weblogic.index'))
+    programm = MentorProgramm.query.filter_by(id=programmId).first()
+    programm.mentorId = current_user.id
+    db.session.commit()
+    return redirect(url_for( 'weblogic.mentor_page'))
+
+@email.route('/leaveTrainee/<programmId>', methods=['POST'])
+@login_required
+def leaveTrainee(programmId):
+    if not current_user.is_dm():
+        flash("You dont have the rights")
+        return redirect(url_for( 'weblogic.index'))
+    programm = MentorProgramm.query.filter_by(id=programmId).first()
+    programm.mentorId = None
+    db.session.commit()
+    return redirect(url_for( 'weblogic.mentor_page'))
+
+@email.route('/newRuleset', methods=["post"])
+def newRuleset():
+    ruleset = request.form.get('ruleset')
+    ruleset = Ruleset(ruleset = ruleset)
+    db.session.add(ruleset)
+    db.session.commit()
+    return redirect(url_for( 'weblogic.mentor_page'))

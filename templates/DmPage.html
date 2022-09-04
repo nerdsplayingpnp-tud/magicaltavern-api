@@ -1,8 +1,99 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>DM - Mentor Programm</h2>
-            <section class="Blocktext">
-                The Dm Page is currently under construction
-            </section>
+<h2>DM - Campaign Managemment</h2>
+    <section class="Blocktext">
+        Here the Dms can see their own Campaigns and write emails to the players.
+    </section>
+    {% for campaign in campaigns %}
+    <div class='campaign'>
+
+        <table class="table">
+          <thead class='tablehead'>
+            <tr>
+                <th style ="width : 15%"><h2>{{ campaign['name'] }}</h2></th>
+            </tr>
+            </thead>
+          <tbody>
+            <tr>
+            <th scope="row">Dungeonmaster: </th>
+              <td>{{ campaign['dungeon_master'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Beschreibung: </th>
+              <td>{{ campaign['description'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Players Min: </th>
+              <td>{{ campaign['players_min'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Players: </th>
+              <td> {{ campaign['players_current'] }}/{{ campaign['players_max'] }} </td>
+            </tr>
+            {% if current_user.is_dm() %}
+            <tr>
+              <th scope="row">Players in Campaign: </th>
+              <td>{{ campaign['players'] }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+              <th scope="row">Complexity: </th>
+              <td>{{ campaign['complexity'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Place: </th>
+              <td>{{ campaign['place'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Time: </th>
+              <td>{{ campaign['time'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Content Warnings: </th>
+              <td>{{ campaign['content_warnings'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Ruleset: </th>
+              <td>{{ campaign['ruleset'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Campaign Length: </th>
+              <td>{{ campaign['campaign_length'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Language: </th>
+              <td>{{ campaign['language'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Character Creation: </th>
+              <td>{{ campaign['character_creation'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Briefing: </th>
+              <td>{{ campaign['briefing'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Notes: </th>
+              <td>{{ campaign['notes'] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Key </th>
+              <td>{{ campaign['key'] }}</td>
+            </tr>
+            <tr>
+              <form action="/sendMailtoPlayers/{{ campaign['key'] }}" method="post">
+                <td>
+                  <button type="submit">Send Email to all Players</button>
+              </td>
+              <td>
+                <textarea id="text" name="text" cols="100" rows="4" required></textarea> 	
+                </td>
+            </form>
+
+            </tr>
+          </tbody>
+        </table>
+    </div>
+{% endfor %}
 {% endblock %}

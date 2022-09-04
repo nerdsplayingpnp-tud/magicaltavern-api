@@ -33,7 +33,7 @@
                 <li>
                     <a href="./" class="item">
                         <i class="fas fa-newspaper"></i>
-                        Home
+                        News
                     </a>
                 </li>
                 <li>
@@ -45,7 +45,7 @@
                 <li>
                     <a href="/mentor" class="item">
                         <i class="fas fa-cogs"></i>
-                        DM-Mentor Programm
+                        DM-Mentor
                     </a>
                 </li>
                 <li>
@@ -79,19 +79,19 @@
                 {% endif %}
                 {% if not current_user.is_authenticated %}
                 <li>
-                    <a href="/login" class="item">
+                    <a href="/login" class="login">
                         Login
                     </a>
                 </li>
                 <li>
-                    <a href="/signup" class="item">
+                    <a href="/signup" class="login">
                         Signup
                     </a>
                 </li>
                 {% endif %}
                 {% if current_user.is_authenticated %}
                 <li>
-                    <a href="/logout" class="item"> 
+                    <a href="/logout" class="login"> 
                         Logout
                     </a>
                 </li>

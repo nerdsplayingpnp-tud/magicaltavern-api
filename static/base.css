@@ -35,7 +35,24 @@ ul {
     float: left;
     color: #424242;
     text-align: center;
-    padding: 80px 16px;
+    padding: 20px 16px;
+    text-decoration: none;
+    font-size: 25px;
+
+    border-style: solid;
+    border-top-style: none;
+    border-bottom-style: none;
+    border-width: 2px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-color: #cccccc;
+
+}
+.topnav a.login {
+    float: right;
+    color: #424242;
+    padding: 20px 16px;
+    text-align: center;
     text-decoration: none;
     font-size: 25px;
 

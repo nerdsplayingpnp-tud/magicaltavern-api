@@ -51,5 +51,5 @@ if __name__ == "__main__":
     app.register_blueprint(auth)
 
     #uncomment the following line to create the user database on startup
-    #db.create_all(app=app)
+    db.create_all(app=app)
     app.run(port=7777, debug=True)

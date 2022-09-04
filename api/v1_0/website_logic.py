@@ -2,9 +2,9 @@ from flask import *
 from handle_apikeys import *
 
 from api.v1_0.campaigns import get_campaigns, db_campaigns
-
+from db import dbsql as db
 from flask_login import login_required, current_user
-from api.v1_0.models import User
+from api.v1_0.models import User, Ruleset, MentorProgramm
 
 
 weblogic = Blueprint("weblogic", __name__)
@@ -16,7 +16,20 @@ def index():
 @weblogic.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', user=current_user)
+    campaign_names_player = []
+    campaign_names_master = []
+    campaigns_json = get_campaigns()[0].json
+    for campaign in campaigns_json:
+        camp = campaigns_json[campaign]
+        if current_user.email in camp['players']:
+            campaign_names_player.append(camp['name'])
+        if current_user.id == camp['dungeon_master']:
+            campaign_names_master.append(camp['name'])
+    if campaign_names_player == []:
+        campaign_names_player = 'None'
+    if campaign_names_master == []:
+        campaign_names_master = 'None'
+    return render_template('profile.html', user=current_user, campaign_names_player= campaign_names_player, campaign_names_master = campaign_names_master)
 
     
 @weblogic.route('/DmPage')
@@ -24,7 +37,16 @@ def profile():
 def DmPage():
     if not current_user.is_dm():
         return redirect(url_for('weblogic.index'))
-    return render_template('DmPage.html')
+    campaings = []
+    campaigns_json = get_campaigns()[0].json
+    for campaign in campaigns_json:
+        camp = campaigns_json[campaign]
+        if current_user.id == camp['dungeon_master']:
+            camp['key'] = campaign
+            campaings.append(camp)
+        if campaings == []:
+            campaings = 'You dont master any Campaigns right now'
+    return render_template('DmPage.html', campaigns = campaings)
     
 @weblogic.route('/AdminPage')
 @login_required
@@ -91,7 +113,21 @@ def campaign_page():
 
 @weblogic.route('/mentor', methods=["GET"])
 def mentor_page():
-    return render_template('dm_mentor.html')
+    rulesets = Ruleset.query.all()
+    if not rulesets:
+        ruleset = Ruleset(ruleset = "DnD 5th Edition")
+        db.session.add(ruleset)
+        db.session.commit()
+    programms = MentorProgramm.query.all()
+    openProgramms = []
+    mentoredProgramms = []
+    if current_user.is_authenticated:
+        for programm in programms:
+            if not programm.mentorId:
+                openProgramms.append(programm)
+            if programm.mentorId == current_user.id:
+                mentoredProgramms.append(programm)
+    return render_template('dm_mentor.html', rulesets = rulesets, openProgramms = openProgramms, mentoredProgramms = mentoredProgramms)
 
 @weblogic.route('/impressum', methods=["GET"])
 def impressum_page():

@@ -2,16 +2,17 @@
 {% block content %}
 
 <h1 style="padding-bottom: 5px;">Campaigns</h1>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="notification">
+  {{ messages[0] }}. 
+</div>
+{% endif %}
+{% endwith %}
 
     {% for campaign in campaigns %}
         <div class='campaign'>
-          {% with messages = get_flashed_messages() %}
-          {% if messages %}
-          <div class="notification">
-            {{ messages[0] }}. 
-          </div>
-          {% endif %}
-          {% endwith %}
+    
             <table class="table">
               <thead class='tablehead'>
                 <tr>
@@ -32,8 +33,8 @@
                   <td>{{ campaign['players_min'] }}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Players Max: </th>
-                  <td>{{ campaign['players_max'] }}</td>
+                  <th scope="row">Players: </th>
+                  <td> {{ campaign['players_current'] }}/{{ campaign['players_max'] }} </td>
                 </tr>
                 <tr>
                   <th scope="row">Complexity: </th>
@@ -76,14 +77,6 @@
                   <td>{{ campaign['notes'] }}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Players: </th>
-                  <td>{{ campaign['players'] }}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Players Currently: </th>
-                  <td>{{ campaign['players_current'] }}</td>
-                </tr>
-                <tr>
                   <th scope="row">Key </th>
                   <td>{{ campaign['key'] }}</td>
                 </tr>
@@ -91,41 +84,26 @@
                   {% if current_user.is_authenticated %}
                   <form action="/signUpCampaign/{{ campaign['key'] }}" method="post">
                     <td>
-                      <input type="submit">
-                      <br>
-                      Sign up for this campaign
+                      <button type="submit">Sign up for this campaign</button>
                   </td>
                 </form>
                   {% endif %}
                   {% if not current_user.is_authenticated %}
                   <form action="/signUpCampaignEmail/{{ campaign['key'] }}" method="post">
                     <td>
-                      <input type="submit">
-                      <br>
-                      Sign up for this campaign
+                      <button type="submit">Sign up for this campaign</button>
                   </td>
                   <td>
                     <label for="email">Enter your Email</label>
                     <br>
                     <input name="email" type="email" id="email" size="30" required placeholder="yourEmail@something.com">
                   </td>
-                  {% endif %}
-                    
-                  </form>
-                      
-                    
-              
-      </td>
+                  {% endif %}  
+                  </form>    
+                  </td>
                 </tr>
-               
               </tbody>
             </table>
-  
-              
-              
-            </section>
         </div>
-          
-        
     {% endfor %}
 {% endblock %}

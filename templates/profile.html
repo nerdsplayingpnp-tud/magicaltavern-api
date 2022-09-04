@@ -24,7 +24,7 @@
             <th style ="width : 15%" scope="row">New Username:</th>
             <form action="/changeName" method="post">
             <td>
-              <input name="newName" type="text" placeholder = "{{ user['name'] }}" autofocus="">
+              <input name="newName" type="text" placeholder = "{{ user['name'] }}" autofocus="" required>
             </td>
               <td>
                 <button type="submit">change Name</button>  
@@ -54,10 +54,10 @@
             <form action="/changePassword" method="post">
             <td>
               <label for ="oldPassword"> confirm old Password</label>
-              <input name="oldPassword" type="password" placeholder = "*****" autofocus=""></td>
+              <input name="oldPassword" type="password" placeholder = "*****" autofocus="" required></td>
             <td>
               <label for ="newPassword"> Set new Password</label>
-              <input name="newPassword" type="password" placeholder = "*****"></td>
+              <input name="newPassword" type="password" placeholder = "*****" required></td>
                 <td>
                   <button type="submit">change Password</button>              
               </td>
@@ -87,7 +87,7 @@
             <th style ="width : 15%" scope="row">New Email</th>
               <form action="/changeEmail" method="post">
               <td>
-                <input class="input is-large" type="email" name="email" placeholder="{{ user['email'] }}" autofocus="">
+                <input class="input is-large" type="email" name="email" placeholder="{{ user['email'] }}" autofocus="" required>
               </td>
               <td>
                 <button type="submit">change Email</button>  
@@ -117,7 +117,30 @@
             <th style ="width : 15%" scope="row">Access-Level</th>
             <td>{{ user['access'] }}</td>
         </tr>
+        <tr>
+          <th style ="width : 15%" scope="row">Player in:</th>
+          <td>{{ campaign_names_player }}</td>
+      </tr>
+      <tr>
+        <th style ="width : 15%" scope="row">Gamemaster of:</th>
+        <td>{{ campaign_names_master }}</td>
+    </tr>
       </tbody>
     </table>
+  {% if not deleteAccount %}
+    <form action="/deleteAccount" method="get">
+        <button type="submit">delete your Account?</button>  
+  </form>
+    {% endif %}
+    {% if deleteAccount %}
+    <form action="/deleteAccount" method="post">
+        <label for ="password"> Confirm Password to delete Account</label>
+        <input name="password" type="password" placeholder = "*****" required>
+        <button type="submit">delete your Account</button>  
+  </form>
+  <form action="/profile" method="get">
+    <button type="submit">cancel</button> 
+</form> 
+{% endif %}
   </div>
 {% endblock %}
