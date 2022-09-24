@@ -1,7 +1,8 @@
 import json
 import random
 from pathlib import Path
-
+from flask_sqlalchemy import SQLAlchemy
+dbsql = SQLAlchemy()
 
 def make_file(file: str) -> Path:
     """Create a file (and its' path), if it doesn't already exist.

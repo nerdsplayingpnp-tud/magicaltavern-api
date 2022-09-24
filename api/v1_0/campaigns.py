@@ -1,7 +1,8 @@
 from crypt import methods
 from flask import *
 from db import Database, make_file
-from handle_apikeys import validate
+from handle_apikeys import *
+from flask_login import current_user
 
 db_campaigns = Database(make_file("data/db/campaigns.json"))
 
@@ -23,8 +24,7 @@ def get_campaign(key):
         return db_campaigns.get_key(key), 200
     abort(404)
 
-
-@campaigns_api.route("/api/v1.0/campaigns/<int:key>/player/", methods=["PUT"])
+@campaigns_api.route("/api/v1.0/campaigns/<int:key>/", methods=["PUT"]) # TODO: This breaks the magicaltavern-bot. An API Version v1.1 has to be created which has @campaigns_api.route("/api/v1.0/campaigns/<int:key>/player/", methods=["PUT"]) instead of the current PUT function.
 def toggle_player(key):
     #   We update the player list and count by modifying an in-memory clone of the requested
     #   key-value-pair, and then updating the database when we are done. This saves disk activity.
@@ -67,7 +67,30 @@ def confirm_view(key):
         campaign.update({"has_view": False})
         return jsonify(False)
 
+def toggle_player_web(key):
+    #Another version is needed for the website logic (i think)
+    campaign: dict = db_campaigns.get_key(key)
+    campaign_players: list = campaign["players"]
+    campaign_players_count: int = campaign["players_current"]
+   
+    #check if user is guest and the email should be used for identification
+    if current_user.is_guest():
+        request_player = current_user.email
+    else:
+        #may soon be used to have registered users sign in with username but not yet
+        request_player = current_user.email
+  
+    if request_player in campaign_players:
+        campaign_players.remove(request_player)
+        campaign.update({"players": campaign_players})
+        campaign.update({"players_current": campaign_players_count - 1})
+    else:
+        campaign_players.append(request_player)
+        campaign.update({"players": campaign_players})
+        campaign.update({"players_current": campaign_players_count + 1})
+    return json.dumps(db_campaigns.set_key(campaign, key), indent=4)
 
+    
 @campaigns_api.route("/api/v1.0/campaigns/", methods=["POST"])
 def set_campaign():
     if not validate(request.args.get("apikey")):
