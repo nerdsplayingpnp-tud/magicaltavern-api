@@ -16,8 +16,6 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 app = Flask(__name__)
 # Register the blueprint in api/v1_0/campaigns.py
-app.register_blueprint(campaigns_api)
-app.register_blueprint(message_keys)
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
