@@ -137,7 +137,7 @@ def mentor_page():
             if programm.mentorId == current_user.id:
                 mentoredProgramms.append(programm)
     return render_template(
-        "dm_mentor.html",
+        "dm_Mentor.html",
         rulesets=rulesets,
         openProgramms=openProgramms,
         mentoredProgramms=mentoredProgramms,
