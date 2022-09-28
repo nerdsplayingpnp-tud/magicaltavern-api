@@ -4,16 +4,18 @@ from handle_apikeys import *
 from api.v1_0.campaigns import get_campaigns, db_campaigns
 from db import dbsql as db
 from flask_login import login_required, current_user
-from api.v1_0.models import User, Ruleset, MentorProgramm
+from page.models import User, Ruleset, MentorProgramm
 
 
 weblogic = Blueprint("weblogic", __name__)
 
-@weblogic.route('/')
-def index():
-    return render_template('index.html')
 
-@weblogic.route('/profile')
+@weblogic.route("/")
+def index():
+    return render_template("index.html")
+
+
+@weblogic.route("/profile")
 @login_required
 def profile():
     campaign_names_player = []
@@ -21,46 +23,52 @@ def profile():
     campaigns_json = get_campaigns()[0].json
     for campaign in campaigns_json:
         camp = campaigns_json[campaign]
-        if current_user.email in camp['players']:
-            campaign_names_player.append(camp['name'])
-        if current_user.id == camp['dungeon_master']:
-            campaign_names_master.append(camp['name'])
+        if current_user.email in camp["players"]:
+            campaign_names_player.append(camp["name"])
+        if current_user.id == camp["dungeon_master"]:
+            campaign_names_master.append(camp["name"])
     if campaign_names_player == []:
-        campaign_names_player = 'None'
+        campaign_names_player = "None"
     if campaign_names_master == []:
-        campaign_names_master = 'None'
-    return render_template('profile.html', user=current_user, campaign_names_player= campaign_names_player, campaign_names_master = campaign_names_master)
+        campaign_names_master = "None"
+    return render_template(
+        "profile.html",
+        user=current_user,
+        campaign_names_player=campaign_names_player,
+        campaign_names_master=campaign_names_master,
+    )
 
-    
-@weblogic.route('/DmPage')
+
+@weblogic.route("/DmPage")
 @login_required
 def DmPage():
     if not current_user.is_dm():
-        return redirect(url_for('weblogic.index'))
+        return redirect(url_for("weblogic.index"))
     campaings = []
     campaigns_json = get_campaigns()[0].json
     for campaign in campaigns_json:
         camp = campaigns_json[campaign]
-        if current_user.id == camp['dungeon_master']:
-            camp['key'] = campaign
+        if current_user.id == camp["dungeon_master"]:
+            camp["key"] = campaign
             campaings.append(camp)
         if campaings == []:
-            campaings = 'You dont master any Campaigns right now'
-    return render_template('DmPage.html', campaigns = campaings)
-    
-@weblogic.route('/AdminPage')
+            campaings = "You dont master any Campaigns right now"
+    return render_template("DmPage.html", campaigns=campaings)
+
+
+@weblogic.route("/AdminPage")
 @login_required
 def AdminPage():
     if not current_user.is_admin():
-        return redirect(url_for('weblogic.index'))
+        return redirect(url_for("weblogic.index"))
     users = User.query.all()
-    return render_template('AdminPage.html', users=users)
+    return render_template("AdminPage.html", users=users)
 
 
-@weblogic.route('/campaigns', methods=["GET"])
+@weblogic.route("/campaigns", methods=["GET"])
 def campaign_page():
-    #get campaigns 
-    
+    # get campaigns
+
     camp1 = {
         "name": "test",
         "dungeon_master": 261192665247252480,
@@ -78,11 +86,11 @@ def campaign_page():
         "briefing": "a",
         "notes": "a",
         "players_current": 0,
-        "players": []
+        "players": [],
     }
 
     camp2 = {
-         "name": "Test 2",
+        "name": "Test 2",
         "dungeon_master": 261192665247252480,
         "description": "Dies ist eine Beschreibung. Beschreibungen k\u00f6nnen recht lang sein, deswegen mache ich sie auch lang. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
         "players_min": 1,
@@ -98,7 +106,7 @@ def campaign_page():
         "briefing": "Ja",
         "notes": "N\u00f6",
         "players_current": 0,
-        "players": []
+        "players": [],
     }
     if (not db_campaigns.has_key(922031)) & (not db_campaigns.has_key(553841)):
         db_campaigns.set_key((camp1), 922031)
@@ -107,15 +115,16 @@ def campaign_page():
     campaings = []
     for campaign in campaigns_json:
         camp = campaigns_json[campaign]
-        camp['key'] = campaign
+        camp["key"] = campaign
         campaings.append(camp)
-    return render_template('campaigns.html', campaigns = campaings)
+    return render_template("campaigns.html", campaigns=campaings)
 
-@weblogic.route('/mentor', methods=["GET"])
+
+@weblogic.route("/mentor", methods=["GET"])
 def mentor_page():
     rulesets = Ruleset.query.all()
     if not rulesets:
-        ruleset = Ruleset(ruleset = "DnD 5th Edition")
+        ruleset = Ruleset(ruleset="DnD 5th Edition")
         db.session.add(ruleset)
         db.session.commit()
     programms = MentorProgramm.query.all()
@@ -127,8 +136,14 @@ def mentor_page():
                 openProgramms.append(programm)
             if programm.mentorId == current_user.id:
                 mentoredProgramms.append(programm)
-    return render_template('dm_mentor.html', rulesets = rulesets, openProgramms = openProgramms, mentoredProgramms = mentoredProgramms)
+    return render_template(
+        "dm_mentor.html",
+        rulesets=rulesets,
+        openProgramms=openProgramms,
+        mentoredProgramms=mentoredProgramms,
+    )
 
-@weblogic.route('/impressum', methods=["GET"])
+
+@weblogic.route("/impressum", methods=["GET"])
 def impressum_page():
-    return render_template('impressum.html')
+    return render_template("impressum.html")

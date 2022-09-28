@@ -22,7 +22,7 @@ from api.v1_0.campaigns import (
     toggle_player_web,
 )
 from api.v1_0.message_keys import message_keys
-from api.v1_0.models import User
+from page.models import User
 from app_configurator import configure
 from db import Database, make_file
 from db import dbsql as db
@@ -55,10 +55,10 @@ if __name__ == "__main__":
     put(generate())
     # Register all the blueprints
     # We have to do this here to avoid circle import
-    from api.v1_0.auth import auth
+    from page.auth import auth
     from api.v1_0.campaigns import campaigns_api
-    from api.v1_0.email import email
-    from api.v1_0.website_logic import weblogic
+    from page.email import email
+    from page.website_logic import weblogic
 
     app.register_blueprint(email)
     app.register_blueprint(campaigns_api)
