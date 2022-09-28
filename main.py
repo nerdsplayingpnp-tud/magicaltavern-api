@@ -31,16 +31,7 @@ from handle_apikeys import generate, put
 
 app = Flask(__name__)
 # Register the blueprint in api/v1_0/campaigns.py
-
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = "nerdsplaypnpvalidator@gmail.com"
-app.config["MAIL_PASSWORD"] = "xwebtezpptgxfcbs"  #'$52ceP^1xbMU'
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
-app.config[
-    "SECRET_KEY"
-] = "e6405ba489b12b5c3e736e70094c315c85132c5cb16bd2c5cfbbbe47868bfe32"
+app = configure(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 mail = Mail(app)
 db.init_app(app)
