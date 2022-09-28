@@ -366,3 +366,4 @@ docker-compose.yml
 
 # Stop app_configurator from being uploaded. Contains sensitive data.
 app_configurator.py
+app_configurator.py
