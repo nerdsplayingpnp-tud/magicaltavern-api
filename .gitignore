@@ -2,6 +2,7 @@
 data/*
 data/
 
+
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm+all,visualstudiocode,macos,windows,linux,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm+all,visualstudiocode,macos,windows,linux,flask
 
@@ -362,3 +363,6 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all,visualstudiocode,macos,windows,linux,flask
 
 docker-compose.yml
+
+# Stop app_configurator from being uploaded. Contains sensitive data.
+app_configurator.py
