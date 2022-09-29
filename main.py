@@ -1,4 +1,4 @@
-import json
+import json, uuid
 from pathlib import Path
 
 from flask import Flask
@@ -10,6 +10,7 @@ from app_configurator import configure
 from api.v2_0.models import dbsql as db
 from handle_apikeys import generate, put
 from api.v2_0.models import User
+from api.v2_0.authentication import *
 
 
 app = Flask(
@@ -37,9 +38,15 @@ def load_user(user_id):
 
 
 if __name__ == "__main__":
+    db.create_all(app=app)
     put(generate())
     # Register all the blueprints
     # We have to do this here to avoid circle import
+    token = create_token(str(uuid.uuid4().hex))
+    print("Token " + token)
+    print("Valid? " + str(validate_token(token)))
+    remove_token("Test-Token 1")
+    print("Still valid? " + str(validate_token(token)))
     from api.v1_0.campaigns import campaigns_api_v1
     from page.auth import auth
     from page.email import email
@@ -64,5 +71,4 @@ if __name__ == "__main__":
     app.register_blueprint(message_keys)
 
     # uncomment the following line to create the user database on startup
-    db.create_all(app=app)
-    app.run(port=7777, debug=True)
+    app.run(port=7777, debug=False)
