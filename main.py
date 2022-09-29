@@ -1,5 +1,4 @@
 import json
-import time
 from pathlib import Path
 from wsgiref.util import request_uri
 
@@ -22,14 +21,20 @@ from api.v1_0.campaigns import (
     toggle_player_web,
 )
 from api.v1_0.message_keys import message_keys
-from page.models import User
 from app_configurator import configure
-from db import Database, make_file
+from db import Database
 from db import dbsql as db
-
+from db import make_file
 from handle_apikeys import generate, put
+from page.models import User
+from page.routes.admin_page import AdminPage
+from page.routes.campaigns import campaign_page
+from page.routes.dm_page import DmPage
+from page.routes.imprint import impressum_page
 
-app = Flask(__name__)
+app = Flask(
+    __name__, template_folder=Path("page/templates"), static_folder=Path("page/static")
+)
 # Register the blueprint in api/v1_0/campaigns.py
 app = configure(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
@@ -55,15 +60,27 @@ if __name__ == "__main__":
     put(generate())
     # Register all the blueprints
     # We have to do this here to avoid circle import
-    from page.auth import auth
     from api.v1_0.campaigns import campaigns_api
+    from page.auth import auth
     from page.email import email
-    from page.website_logic import weblogic
+    from page.routes.admin_page import admin_page
+    from page.routes.campaigns import campaigns
+    from page.routes.dm_page import dm_page
+    from page.routes.imprint import imprint
+    from page.routes.index import index as index_page
+    from page.routes.mentor import mentor
+    from page.routes.profile import profile
 
     app.register_blueprint(email)
     app.register_blueprint(campaigns_api)
-    app.register_blueprint(weblogic)
     app.register_blueprint(auth)
+    app.register_blueprint(admin_page)
+    app.register_blueprint(campaigns)
+    app.register_blueprint(dm_page)
+    app.register_blueprint(imprint)
+    app.register_blueprint(index_page)
+    app.register_blueprint(mentor)
+    app.register_blueprint(profile)
 
     # uncomment the following line to create the user database on startup
     db.create_all(app=app)
