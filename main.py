@@ -7,7 +7,7 @@ from flask_mail import Mail
 
 from api.v1_0.message_keys import message_keys
 from app_configurator import configure
-from db import dbsql as db
+from api.v2_0.models import dbsql as db
 from handle_apikeys import generate, put
 from api.v2_0.models import User
 

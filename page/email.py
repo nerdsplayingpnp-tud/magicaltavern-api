@@ -11,7 +11,7 @@ from flask_login import (
 from flask_mail import Mail, Message
 from handle_apikeys import generate, put
 from pathlib import Path
-from db import Database, make_file, dbsql as db
+from api.v2_0.models import dbsql as db
 import json, time
 from api.v1_0.campaigns import get_campaigns, db_campaigns, toggle_player_web
 from main import mail

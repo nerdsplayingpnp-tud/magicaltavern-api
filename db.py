@@ -1,9 +1,6 @@
 import json
 import random
 from pathlib import Path
-from flask_sqlalchemy import SQLAlchemy
-
-dbsql = SQLAlchemy()  # TODO: Refactor this
 
 
 def make_file(file: str) -> Path:

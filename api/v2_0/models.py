@@ -1,8 +1,9 @@
-from db import dbsql as db
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Column, Table
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 
+dbsql = SQLAlchemy()
 
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
 COMPLEXITY = {"easy": 0, "medium": 1, "hard": 2}
@@ -11,27 +12,27 @@ LANGUAGE = {"eng": 0, "ger": 1, "gereng": 2}
 
 campaign_player_association = Table(
     "campaign_player_association",
-    db.metadata,
+    dbsql.metadata,
     Column("player", ForeignKey("user.id")),
     Column("campaign", ForeignKey("campaign.id")),
 )
 
 campaign_dm_association = Table(
     "campaign_dm_association",
-    db.metadata,
+    dbsql.metadata,
     Column("dm", ForeignKey("user.id")),
     Column("campaign", ForeignKey("campaign.id")),
 )
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, dbsql.Model):
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    name = db.Column(db.String(1000))
-    email_confirm = db.Column(db.Boolean)
-    access = db.Column(db.Integer)
+    id = dbsql.Column(dbsql.Integer, primary_key=True)
+    email = dbsql.Column(dbsql.String(100), unique=True)
+    password = dbsql.Column(dbsql.String(100))
+    name = dbsql.Column(dbsql.String(1000))
+    email_confirm = dbsql.Column(dbsql.Boolean)
+    access = dbsql.Column(dbsql.Integer)
     player_in = relationship("Campaign", secondary=campaign_player_association)
     dm_of = relationship("Campaign", secondary=campaign_dm_association)
 
@@ -48,41 +49,41 @@ class User(UserMixin, db.Model):
         return self.access == ACCESS["guest"]
 
 
-class MentorProgramm(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    mentorId = db.Column(db.Integer)
-    studentId = db.Column(db.Integer)
-    format = db.Column(db.String)
-    ruleset = db.Column(db.String)
-    description = db.Column(db.String)
-    language = db.Column(db.String)
+class MentorProgramm(dbsql.Model):
+    id = dbsql.Column(dbsql.Integer, primary_key=True)
+    mentorId = dbsql.Column(dbsql.Integer)
+    studentId = dbsql.Column(dbsql.Integer)
+    format = dbsql.Column(dbsql.String)
+    ruleset = dbsql.Column(dbsql.String)
+    description = dbsql.Column(dbsql.String)
+    language = dbsql.Column(dbsql.String)
 
 
-class Ruleset(db.Model):
+class Ruleset(dbsql.Model):
     __tablename__ = "ruleset"
-    id = db.Column(db.Integer, primary_key=True)
-    ruleset = db.Column(db.String)
+    id = dbsql.Column(dbsql.Integer, primary_key=True)
+    ruleset = dbsql.Column(dbsql.String)
     used_by = relationship("Campaign")
 
 
-class Campaign(db.Model):
+class Campaign(dbsql.Model):
     __tablename__ = "campaign"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(
-        db.String,
+    id = dbsql.Column(dbsql.Integer, primary_key=True)
+    name = dbsql.Column(
+        dbsql.String,
     )
-    description = db.Column(db.String, nullable=False)
-    players_min = db.Column(db.Integer, nullable=False)
-    players_max = db.Column(db.Integer, nullable=False)
-    players_current = db.Column(db.Integer)
-    complexity = db.Column(db.Integer, nullable=False)
-    place = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.String, nullable=False)
-    content_warnings = db.Column(db.String, nullable=False)
-    ruleset = db.Column(db.Integer, ForeignKey("ruleset.id"), nullable=False)
-    campaign_length = db.Column(db.Integer, nullable=False)
-    language = db.Column(db.Integer, nullable=False)
-    character_creation = db.Column(db.String, nullable=False)
-    briefing = db.Column(db.String, nullable=False)
-    notes = db.Column(db.String, nullable=False)
-    image_url = db.Column(db.String)
+    description = dbsql.Column(dbsql.String, nullable=False)
+    players_min = dbsql.Column(dbsql.Integer, nullable=False)
+    players_max = dbsql.Column(dbsql.Integer, nullable=False)
+    players_current = dbsql.Column(dbsql.Integer)
+    complexity = dbsql.Column(dbsql.Integer, nullable=False)
+    place = dbsql.Column(dbsql.Integer, nullable=False)
+    time = dbsql.Column(dbsql.String, nullable=False)
+    content_warnings = dbsql.Column(dbsql.String, nullable=False)
+    ruleset = dbsql.Column(dbsql.Integer, ForeignKey("ruleset.id"), nullable=False)
+    campaign_length = dbsql.Column(dbsql.Integer, nullable=False)
+    language = dbsql.Column(dbsql.Integer, nullable=False)
+    character_creation = dbsql.Column(dbsql.String, nullable=False)
+    briefing = dbsql.Column(dbsql.String, nullable=False)
+    notes = dbsql.Column(dbsql.String, nullable=False)
+    image_url = dbsql.Column(dbsql.String)

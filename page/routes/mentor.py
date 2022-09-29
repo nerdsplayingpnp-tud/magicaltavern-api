@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import current_user
-from db import dbsql as db
+from api.v2_0.models import dbsql as db
 from api.v2_0.models import MentorProgramm, Ruleset
 
 mentor = Blueprint("mentor", __name__)
