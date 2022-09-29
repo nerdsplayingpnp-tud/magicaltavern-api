@@ -54,6 +54,7 @@ def validate_token(token: str) -> bool:
 
 
 def remove_token(token: str = None, name: str = None):
+    # TODO: Fix
     """Removes (invalidates) an access token. Only one argument 'token' OR 'name' can be passed,
     not both.
 
