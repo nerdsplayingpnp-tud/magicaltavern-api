@@ -11,6 +11,7 @@ from api.v2_0.models import dbsql as db
 from handle_apikeys import generate, put
 from api.v2_0.models import User
 
+
 app = Flask(
     __name__, template_folder=Path("page/templates"), static_folder=Path("page/static")
 )
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     put(generate())
     # Register all the blueprints
     # We have to do this here to avoid circle import
-    from api.v1_0.campaigns import campaigns_api
+    from api.v1_0.campaigns import campaigns_api_v1
     from page.auth import auth
     from page.email import email
     from page.routes.admin_page import admin_page
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     from page.routes.profile import profile
 
     app.register_blueprint(email)
-    app.register_blueprint(campaigns_api)
+    app.register_blueprint(campaigns_api_v1)
     app.register_blueprint(auth)
     app.register_blueprint(admin_page)
     app.register_blueprint(campaigns)
