@@ -1,36 +1,15 @@
 import json
 from pathlib import Path
-from wsgiref.util import request_uri
 
 from flask import Flask
-from flask_login import (
-    LoginManager,
-    current_user,
-    login_required,
-    login_user,
-    logout_user,
-)
-from flask_mail import Mail, Message
-from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
-from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import LoginManager
+from flask_mail import Mail
 
-from api.v1_0.campaigns import (
-    campaigns_api,
-    db_campaigns,
-    get_campaigns,
-    toggle_player_web,
-)
 from api.v1_0.message_keys import message_keys
 from app_configurator import configure
-from db import Database
 from db import dbsql as db
-from db import make_file
 from handle_apikeys import generate, put
 from page.models import User
-from page.routes.admin_page import AdminPage
-from page.routes.campaigns import campaign_page
-from page.routes.dm_page import DmPage
-from page.routes.imprint import impressum_page
 
 app = Flask(
     __name__, template_folder=Path("page/templates"), static_folder=Path("page/static")
@@ -81,6 +60,7 @@ if __name__ == "__main__":
     app.register_blueprint(index_page)
     app.register_blueprint(mentor)
     app.register_blueprint(profile)
+    app.register_blueprint(message_keys)
 
     # uncomment the following line to create the user database on startup
     db.create_all(app=app)
