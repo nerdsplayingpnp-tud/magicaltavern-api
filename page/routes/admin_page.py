@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, redirect
 from flask_login import current_user, login_required
-from page.models import User
+from api.v2_0.models import User
 
 admin_page = Blueprint("admin_page", __name__)
 

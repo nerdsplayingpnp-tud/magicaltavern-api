@@ -9,14 +9,14 @@ from api.v1_0.message_keys import message_keys
 from app_configurator import configure
 from db import dbsql as db
 from handle_apikeys import generate, put
-from page.models import User
+from api.v2_0.models import User
 
 app = Flask(
     __name__, template_folder=Path("page/templates"), static_folder=Path("page/static")
 )
 # Register the blueprint in api/v1_0/campaigns.py
-app = configure(app)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+app = configure(app)  # Done to hide
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db/db.sqlite"
 mail = Mail(app)
 db.init_app(app)
 

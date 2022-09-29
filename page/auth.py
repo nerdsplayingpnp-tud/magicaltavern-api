@@ -1,7 +1,7 @@
 from flask import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import dbsql as db
-from page.models import User
+from api.v2_0.models import User
 from flask_login import login_user, login_required, logout_user
 from page.email import validate
 

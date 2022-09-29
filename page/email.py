@@ -15,7 +15,7 @@ from db import Database, make_file, dbsql as db
 import json, time
 from api.v1_0.campaigns import get_campaigns, db_campaigns, toggle_player_web
 from main import mail
-from page.models import User, MentorProgramm, Ruleset
+from api.v2_0.models import User, MentorProgramm, Ruleset
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 
