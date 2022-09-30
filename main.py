@@ -42,11 +42,6 @@ if __name__ == "__main__":
     put(generate())
     # Register all the blueprints
     # We have to do this here to avoid circle import
-    token = create_token(str(uuid.uuid4().hex))
-    print("Token " + token)
-    print("Valid? " + str(validate_token(token)))
-    remove_token("Test-Token 1")
-    print("Still valid? " + str(validate_token(token)))
     from api.v1_0.campaigns import campaigns_api_v1
     from page.auth import auth
     from page.email import email

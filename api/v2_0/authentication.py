@@ -53,38 +53,22 @@ def validate_token(token: str) -> bool:
         logging.error("token-attribute cannot be empty.")
 
 
-def remove_token(token: str = None, name: str = None):
-    # TODO: Fix
-    """Removes (invalidates) an access token. Only one argument 'token' OR 'name' can be passed,
-    not both.
+def remove_token(name: str = None):
+    """Removes (invalidates) an access token.
 
     Args:
-        token (str): The token to be invalidated.
         name (str): The name of the token to be invalidated.
 
     Returns:
         Nothing
     """
-    if token != None and name != None:
-        logging.error("Only one argument 'name' OR 'token' can be passed.")
-        return
-    if name != None and name != "":
-        with app.app_context():
-            devices = Devices.query.all()
-        for device in devices:
-            if device.name == name:
-                with app.app_context():
-                    db.session.remove(device)
-                    return db.session.commit()
-    elif token != None and token != "":
-        with app.app_context():
-            devices = Devices.query.all()
-        for device in devices:
-            if device.key == token:
-                with app.app_context():
-                    db.session.remove(device)
-                    return db.session.commit()
-    else:
-        return logging.error(
-            "The token that was supposed to be removed could not be found."
-        )
+    if name == None or name == "":
+        return logging.error("name-attribute cannot be empty.")
+    with app.app_context():
+        keys = Devices.query.all()
+    for key in keys:
+        if key.name == name:
+            with app.app_context():
+                db.session.delete(key)
+                db.session.commit()
+            return
