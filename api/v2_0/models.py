@@ -87,6 +87,7 @@ class Campaign(dbsql.Model):
     briefing = dbsql.Column(dbsql.String, nullable=False)
     notes = dbsql.Column(dbsql.String, nullable=False)
     image_url = dbsql.Column(dbsql.String)
+    message_id = dbsql.Column(dbsql.Integer, unique=True)
 
 
 class Devices(dbsql.Model):
