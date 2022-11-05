@@ -43,6 +43,7 @@ if __name__ == "__main__":
     # Register all the blueprints
     # We have to do this here to avoid circle import
     from api.v1_0.campaigns import campaigns_api_v1
+    from api.v2_0.campaigns import campaigns_api_v2
     from page.auth import auth
     from page.email import email
     from page.routes.admin_page import admin_page
@@ -64,6 +65,7 @@ if __name__ == "__main__":
     app.register_blueprint(mentor)
     app.register_blueprint(profile)
     app.register_blueprint(message_keys)
+    app.register_blueprint(campaigns_api_v2)
 
     # uncomment the following line to create the user database on startup
-    app.run(port=7777, debug=False)
+    app.run(port=7777, debug=True)
