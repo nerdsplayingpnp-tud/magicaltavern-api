@@ -1,9 +1,36 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, Column, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, Column, Table, inspect, select
+from sqlalchemy.orm import relationship, Session
 from flask_login import UserMixin
 
 dbsql = SQLAlchemy()
+
+
+def to_dict(table: Table):
+    """to_dict can convert any SQLAlchemy ORM Table to a Python dict.
+    Args:
+        table (Table): Any SQLAlchemy ORM Table.
+    """
+    ### Comments reference the line below the comment, not the one above.
+    returned_dict = {}
+    # Gets all the different column names from the given table
+    table_columns = [table_column.name for table_column in inspect(table).c]
+    # Gets all the entries in the table
+    table_rows = table.query.all()
+    for row in table_rows:
+        # Save the id (primary key) of the current entry
+        row_id = row.id
+        # Convert the row (Type: Table( to a dict, so that we can work with it easier
+        row = row.__dict__
+        # A temporary dictionary for the specific entry we are working on
+        row_dict = {}
+        for column in table_columns:
+            # add all the column names and their respective values into the temporary dictionary
+            row_dict[str(column)] = row[column]
+        # Save the temporary dictionary to the main dictionary
+        returned_dict[row_id] = row_dict
+    return returned_dict
+
 
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
 COMPLEXITY = {"easy": 0, "medium": 1, "hard": 2}
