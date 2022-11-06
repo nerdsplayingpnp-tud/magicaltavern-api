@@ -1,6 +1,5 @@
-from api.v2_0.models import dbsql as db
-from flask import Flask, Blueprint, abort, jsonify, request, views, Response
-from api.v2_0.models import Campaign, to_dict
+from flask import Blueprint, Response
+from api.v2_0.models import Campaign
 
 campaigns_api_v2 = Blueprint("campaigns_api_v2", __name__)
 
