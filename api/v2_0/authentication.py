@@ -3,6 +3,7 @@ import uuid
 
 from api.v2_0.models import dbsql as db
 from api.v2_0.models import Devices
+from flask import request, abort
 from main import app
 
 
@@ -32,7 +33,40 @@ def create_token(name: str) -> str:
     return key
 
 
-def validate_token(token: str) -> bool:
+def abort_if_token_invalid(request: request) -> None:
+    """unlike request_has_valid_token, this function, if called from the context of a flask route,
+    will abort a request with a status 401 response, if the supplied request does not have a valid
+    API token in its' header.
+
+    Args:
+        request (request): A flask request object
+
+    Returns:
+        None: This function either terminated by returning NoneType if the request has a valid API
+        Token in its' header, or by aborting the request with an HTTP 401 status code.
+    """
+    if request_has_valid_token(request):
+        return None
+    else:
+        abort(401)
+
+
+def request_has_valid_token(request: request) -> bool:
+    """If passed a flask request object, this method will check whether or not the provided API
+    token exists and is valid, and will then return a corresponding bool.
+
+    Args:
+        request (request): A flask request object.
+
+    Returns:
+        bool: True, if the token has been verified to be valid.. False, if not.
+    """
+    if request.headers.get("token") and __validate_token(request.headers.get("token")):
+        return True
+    return False
+
+
+def __validate_token(token: str) -> bool:
     """Checks if a given token is valid for accessing the API.
 
     Args:
@@ -49,8 +83,7 @@ def validate_token(token: str) -> bool:
             if dbtoken.key == token:
                 return True
         return False
-    else:
-        logging.error("token-attribute cannot be empty.")
+    return False
 
 
 def remove_token(name: str = None):
