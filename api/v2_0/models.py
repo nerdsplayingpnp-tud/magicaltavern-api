@@ -1,29 +1,24 @@
+from sqlalchemy_serializer import SerializerMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Column, Table, inspect, select
 from sqlalchemy.orm import relationship, Session
+
 from sqlalchemy.sql.expression import Executable
 from flask_login import UserMixin
 
 dbsql = SQLAlchemy()
 
 
-def table_to_dict(table: Table) -> dict:
-    """table_to_dict can convert any SQLAlchemy ORM Table to a Python dict.
+def table_to_dict(model: dbsql.Model) -> dict:
+    """table_to_dict can convert any SQLAlchemy ORM Table with one primary key to a Python dict.
     Args:
-        table (Table): Any SQLAlchemy ORM Table.
+        model (SQLAlchemy.Model): Any SQLAlchemy ORM Table.
     """
     returned_dict = {}
-    # Gets all the different column names from the given table
-    table_columns = [table_column.name for table_column in inspect(table).c]
-    # Gets all the entries in the table
-    table_rows = table.query.all()
-    for row in table_rows:
-        row_id = row.id
-        row = row.__dict__
-        row_dict = {}
-        for column in table_columns:
-            row_dict[str(column)] = row[column]
-        returned_dict[row_id] = row_dict
+    primary_key = str(inspect(model).primary_key[0].name)
+    entries = model.query.all()
+    for entry in entries:
+        returned_dict[getattr(entry, primary_key)] = entry.to_dict()
     return returned_dict
 
 
@@ -88,7 +83,7 @@ class Ruleset(dbsql.Model):
     used_by = relationship("Campaign")
 
 
-class Campaign(dbsql.Model):
+class Campaign(dbsql.Model, SerializerMixin):
     __tablename__ = "campaign"
     id = dbsql.Column(dbsql.Integer, primary_key=True)
     name = dbsql.Column(
