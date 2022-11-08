@@ -1,12 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Column, Table, inspect, select
 from sqlalchemy.orm import relationship, Session
+from sqlalchemy.sql.expression import Executable
 from flask_login import UserMixin
 
 dbsql = SQLAlchemy()
 
 
-def table_to_dict(table: Table):
+def table_to_dict(table: Table) -> dict:
     """table_to_dict can convert any SQLAlchemy ORM Table to a Python dict.
     Args:
         table (Table): Any SQLAlchemy ORM Table.
