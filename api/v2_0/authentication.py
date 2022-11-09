@@ -79,7 +79,6 @@ def __validate_token(token: str) -> bool:
         with app.app_context():
             tokens = Devices.query.all()
         for dbtoken in tokens:
-            print("Checking token " + str(dbtoken.key))
             if dbtoken.key == token:
                 return True
         return False
