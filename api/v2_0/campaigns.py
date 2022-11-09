@@ -42,7 +42,7 @@ def add_new_campaign():
     except KeyError:
         abort(
             400,
-            "Your request does not contain all required valued. Please, consult the API documentation.",
+            "Your request does not contain all required values. Please, consult the API documentation.",
         )
     return jsonify(new_campaign.id), 200
 
