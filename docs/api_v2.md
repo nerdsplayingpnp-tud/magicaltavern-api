@@ -82,4 +82,4 @@ An integer value, ranging from 0-2
 - 2: German and English
 
 **image_url**  
-The image url has to be a direct link to an image.
+The image URL has to be a direct link to an image.
