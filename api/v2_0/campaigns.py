@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, escape, abort
+from flask import Blueprint, request, jsonify, escape, abort, Response
 from api.v2_0.authentication import abort_if_token_invalid
 from api.v2_0.models import (
     table_to_dict,
@@ -55,12 +55,23 @@ def add_new_campaign():
 @campaigns_api_v2.route("/api/v2.0/campaigns/<int:id>", methods=["GET"])
 def get_singular_campaign(id):
     abort_if_token_invalid(request)
-    item = Campaign.query.filter(Campaign.id == id).one()
+    item = Campaign.query.filter(Campaign.id == id).one_or_none()
+    if not item:
+        abort(400, "This Campaign does not exist.")
     return jsonify(item.to_dict()), 200
 
 
-@campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/players/add", methods=["PUT"])
-def get_players_from_campaign(id):
+@campaigns_api_v2.route(
+    "/api/v2.0/campaigns/<int:campaign_id>/players/add/<int:user_id>", methods=["PUT"]
+)
+def add_player_to_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
-    ensure_player_exists(id)
-    player_already_in_campaign = campaign_player_association.query.filter(campaign_player_association.)
+    user_from_id = ensure_player_exists(user_id)
+    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
+    if not campaign:
+        abort(400, "This Campaign does not exist.")
+    if user_from_id in campaign.players:
+        abort(409, "The player is already in this campaign.")
+    campaign.players.append(user_from_id)
+    db.session.commit()
+    return jsonify("Success"), 201

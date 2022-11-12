@@ -23,13 +23,14 @@ def table_to_dict(model: dbsql.Model) -> dict:
     return returned_dict
 
 
-def ensure_player_exists(user_id: int) -> None:
-    if User.query.filter(User.id == user_id).one_or_none() == None:
+def ensure_player_exists(user_id: int):
+    user_exists = User.query.filter(User.id == user_id).one_or_none()
+    if not user_exists:
         new_user = User(id=user_id, access=1)
         dbsql.session.add(new_user)
         dbsql.session.commit()
-        return
-    return
+        return new_user
+    return user_exists
 
 
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
@@ -40,8 +41,8 @@ LANGUAGE = {"eng": 0, "ger": 1, "gereng": 2}
 campaign_player_association = Table(
     "campaign_player_association",
     dbsql.metadata,
-    Column("player", ForeignKey("user.id")),
-    Column("campaign", ForeignKey("campaign.id")),
+    Column("player", ForeignKey("user.id"), primary_key=True),
+    Column("campaign", ForeignKey("campaign.id"), primary_key=True),
 )
 
 campaign_dm_association = Table(
@@ -57,7 +58,9 @@ class User(UserMixin, dbsql.Model):
     id = dbsql.Column(dbsql.Integer, primary_key=True, unique=True)
     name = dbsql.Column(dbsql.String(1000))
     access = dbsql.Column(dbsql.Integer)
-    player_in = relationship("Campaign", secondary=campaign_player_association)
+    player_in = relationship(
+        "Campaign", secondary=campaign_player_association, back_populates="players"
+    )
     dm_of = relationship("Campaign", secondary=campaign_dm_association)
 
     def is_admin(self):
@@ -99,7 +102,10 @@ class Campaign(dbsql.Model, SerializerMixin):
     description = dbsql.Column(dbsql.String, nullable=False)
     players_min = dbsql.Column(dbsql.Integer, nullable=False)
     players_max = dbsql.Column(dbsql.Integer, nullable=False)
-    players_current = dbsql.Column(dbsql.Integer)
+    players_count = dbsql.Column(dbsql.Integer)
+    players = relationship(
+        "User", secondary=campaign_player_association, back_populates="player_in"
+    )
     complexity = dbsql.Column(dbsql.Integer, nullable=False)
     place = dbsql.Column(dbsql.Integer, nullable=False)
     time = dbsql.Column(dbsql.String, nullable=False)
