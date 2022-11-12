@@ -25,8 +25,8 @@ You will receive a `200 - OK` response if you authenticated correctly.
 |---------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
 | /api/v2.0/campaigns       | GET    | Returns all stored campaigns, formatted as .json. The `key` in the `key`-`value`-pair is the campaigns' unique ID.                                                                                 | Yes       |
 | /api/v2.0/campaigns       | POST   | Adds a new campaign entry to the database. Data has to be in json-format and located in the request body. The following data needs to be supplied: [Adding a new Campaign](#adding-a-new-campaign) |Yes        |
-| /api/v2.0/campaigns/\<id> | GET    | Returns the campaign which's `key` matches the supplied `id`, formatted as .json.                                                                                                                  | Yes       |
-| /api/v2.0/campaigns/\<id>/players/ |GET |Returns the Discord User IDs of all players that are currently enrolled into the campaign. | Yes |
+| /api/v2.0/campaigns/\<campaign_id> | GET    | Returns the campaign which's `key` matches the supplied `id`, formatted as .json.                                                                                                                  | Yes       |
+| /api/v2.0/campaigns/\<campaign_id>/players/add/\<user_id> | PUT | Adds a player to a campaign. If the User associated with the user_id does not exist, a new user with that ID will be created. Returns HTTP Status Code 201 on success and Status Code 409 if the player already exists in this campaign.  | Yes |
 
 ## PUTting and POSTing Data
 
