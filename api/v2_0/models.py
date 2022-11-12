@@ -1,9 +1,10 @@
+import sqlalchemy
+
 from sqlalchemy_serializer import SerializerMixin
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, Column, Table, inspect, select
-from sqlalchemy.orm import relationship, Session
+from sqlalchemy import ForeignKey, Column, Table, inspect
+from sqlalchemy.orm import relationship
 
-from sqlalchemy.sql.expression import Executable
 from flask_login import UserMixin
 
 dbsql = SQLAlchemy()
@@ -20,6 +21,15 @@ def table_to_dict(model: dbsql.Model) -> dict:
     for entry in entries:
         returned_dict[getattr(entry, primary_key)] = entry.to_dict()
     return returned_dict
+
+
+def ensure_player_exists(user_id: int) -> None:
+    if User.query.filter(User.id == user_id).one_or_none() == None:
+        new_user = User(id=user_id, access=1)
+        dbsql.session.add(new_user)
+        dbsql.session.commit()
+        return
+    return
 
 
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
@@ -44,11 +54,8 @@ campaign_dm_association = Table(
 
 class User(UserMixin, dbsql.Model):
     __tablename__ = "user"
-    id = dbsql.Column(dbsql.Integer, primary_key=True)
-    email = dbsql.Column(dbsql.String(100), unique=True)
-    password = dbsql.Column(dbsql.String(100))
+    id = dbsql.Column(dbsql.Integer, primary_key=True, unique=True)
     name = dbsql.Column(dbsql.String(1000))
-    email_confirm = dbsql.Column(dbsql.Boolean)
     access = dbsql.Column(dbsql.Integer)
     player_in = relationship("Campaign", secondary=campaign_player_association)
     dm_of = relationship("Campaign", secondary=campaign_dm_association)

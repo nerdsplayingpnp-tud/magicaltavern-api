@@ -24,8 +24,9 @@ You will receive a `200 - OK` response if you authenticated correctly.
 | Route                     | Method | Description                                                                                                                                                                                        | Protected |
 |---------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
 | /api/v2.0/campaigns       | GET    | Returns all stored campaigns, formatted as .json. The `key` in the `key`-`value`-pair is the campaigns' unique ID.                                                                                 | Yes       |
-| /api/v2.0/campaigns       | POST   | Adds a new campaign entry to the database. Data has to be in json-format and located in the request body. The following data needs to be supplied: [Adding a new Campaign](#adding-a-new-campaign) |           |
+| /api/v2.0/campaigns       | POST   | Adds a new campaign entry to the database. Data has to be in json-format and located in the request body. The following data needs to be supplied: [Adding a new Campaign](#adding-a-new-campaign) |Yes        |
 | /api/v2.0/campaigns/\<id> | GET    | Returns the campaign which's `key` matches the supplied `id`, formatted as .json.                                                                                                                  | Yes       |
+| /api/v2.0/campaigns/\<id>/players/ |GET |Returns the Discord User IDs of all players that are currently enrolled into the campaign. | Yes |
 
 ## PUTting and POSTing Data
 

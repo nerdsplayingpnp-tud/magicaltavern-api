@@ -1,6 +1,11 @@
 from flask import Blueprint, request, jsonify, escape, abort
 from api.v2_0.authentication import abort_if_token_invalid
-from api.v2_0.models import table_to_dict, Campaign
+from api.v2_0.models import (
+    table_to_dict,
+    Campaign,
+    ensure_player_exists,
+    campaign_player_association,
+)
 from api.v2_0.models import dbsql as db
 
 campaigns_api_v2 = Blueprint("campaigns_api_v2", __name__)
@@ -52,3 +57,10 @@ def get_singular_campaign(id):
     abort_if_token_invalid(request)
     item = Campaign.query.filter(Campaign.id == id).one()
     return jsonify(item.to_dict()), 200
+
+
+@campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/players/add", methods=["PUT"])
+def get_players_from_campaign(id):
+    abort_if_token_invalid(request)
+    ensure_player_exists(id)
+    player_already_in_campaign = campaign_player_association.query.filter(campaign_player_association.)
