@@ -24,6 +24,14 @@ def table_to_dict(model: dbsql.Model) -> dict:
 
 
 def ensure_player_exists(user_id: int):
+    """If a player (User) doesn't exist, a new user with the supplied id will get created and returned. If the user already exists, that user gets returned.
+
+    Args:
+        user_id (int): The user id to ensure.
+
+    Returns:
+        _type_: A User object
+    """
     user_exists = User.query.filter(User.id == user_id).one_or_none()
     if not user_exists:
         new_user = User(id=user_id, access=1)
@@ -38,6 +46,7 @@ COMPLEXITY = {"easy": 0, "medium": 1, "hard": 2}
 LENGTH = {"short": 0, "medium": 1, "long": 2}
 LANGUAGE = {"eng": 0, "ger": 1, "gereng": 2}
 
+
 campaign_player_association = Table(
     "campaign_player_association",
     dbsql.metadata,
@@ -48,20 +57,23 @@ campaign_player_association = Table(
 campaign_dm_association = Table(
     "campaign_dm_association",
     dbsql.metadata,
-    Column("dm", ForeignKey("user.id")),
-    Column("campaign", ForeignKey("campaign.id")),
+    Column("dm", ForeignKey("user.id"), primary_key=True),
+    Column("campaign", ForeignKey("campaign.id"), primary_key=True),
 )
 
 
-class User(UserMixin, dbsql.Model):
+class User(UserMixin, dbsql.Model, SerializerMixin):
     __tablename__ = "user"
+    serialize_rules = ("-player_in", "-dm_of")
     id = dbsql.Column(dbsql.Integer, primary_key=True, unique=True)
     name = dbsql.Column(dbsql.String(1000))
     access = dbsql.Column(dbsql.Integer)
     player_in = relationship(
         "Campaign", secondary=campaign_player_association, back_populates="players"
     )
-    dm_of = relationship("Campaign", secondary=campaign_dm_association)
+    dm_of = relationship(
+        "Campaign", secondary=campaign_dm_association, back_populates="dm"
+    )
 
     def is_admin(self):
         return self.access == ACCESS["admin"]
@@ -95,11 +107,13 @@ class Ruleset(dbsql.Model):
 
 class Campaign(dbsql.Model, SerializerMixin):
     __tablename__ = "campaign"
+    serialize_rules = ("-players", "-dm")
     id = dbsql.Column(dbsql.Integer, primary_key=True)
     name = dbsql.Column(
         dbsql.String,
     )
     description = dbsql.Column(dbsql.String, nullable=False)
+    dm = relationship("User", secondary=campaign_dm_association, back_populates="dm_of")
     players_min = dbsql.Column(dbsql.Integer, nullable=False)
     players_max = dbsql.Column(dbsql.Integer, nullable=False)
     players_count = dbsql.Column(dbsql.Integer)
