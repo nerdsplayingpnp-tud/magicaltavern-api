@@ -3,8 +3,16 @@ import uuid
 
 from api.v2_0.models import dbsql as db
 from api.v2_0.models import Devices
-from flask import request, abort
+from flask import request, abort, Blueprint
 from main import app
+
+authentication = Blueprint("auth_api_v2", __name__)
+
+
+@authentication.route("/api/v2.0/auth", methods=["GET", "POST", "PUT", "DELETE"])
+def test_authentication():
+    abort_if_token_invalid(request)
+    return "Success.", 200
 
 
 def create_token(name: str) -> str:
