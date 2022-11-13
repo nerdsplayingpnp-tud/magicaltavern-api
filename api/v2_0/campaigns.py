@@ -147,3 +147,39 @@ def remove_player_from_campaign(campaign_id, user_id):
     campaign.players.remove(user_from_id)
     db.session.commit()
     return jsonify("Success"), 201
+
+
+@campaigns_api_v2.route(
+    "/api/v2.0/campaigns/<int:campaign_id>/dm/add/<int:user_id>", methods=["PUT"]
+)
+def add_dm_to_campaign(campaign_id, user_id):
+    abort_if_token_invalid(request)
+    user_from_id = ensure_player_exists(user_id)
+    if not user_from_id.is_dm():
+        abort(400, "Supplied user lacks access level to be DM of a campaign.")
+    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
+    if not campaign:
+        abort(400, "This Campaign does not exist.")
+    if user_from_id in campaign.dm:
+        abort(409, "The player is already DM of this campaign.")
+    if campaign.dm != []:
+        abort(409, "The campaign already has a DM.")
+    campaign.dm = [user_from_id]
+    db.session.commit()
+    return jsonify("Success"), 201
+
+
+@campaigns_api_v2.route(
+    "/api/v2.0/campaigns/<int:campaign_id>/dm/remove/<int:user_id>", methods=["PUT"]
+)
+def remove_dm_from_campaign(campaign_id, user_id):
+    abort_if_token_invalid(request)
+    user_from_id = ensure_player_exists(user_id)
+    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
+    if not campaign:
+        abort(400, "This Campaign does not exist.")
+    if user_from_id not in campaign.dm:
+        abort(409, "The player already isn't DM of this campaign.")
+    campaign.dm = []
+    db.session.commit()
+    return jsonify("Success"), 201
