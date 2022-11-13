@@ -44,6 +44,7 @@ if __name__ == "__main__":
     # We have to do this here to avoid circle import
     from api.v1_0.campaigns import campaigns_api_v1
     from api.v2_0.campaigns import campaigns_api_v2
+    from api.v2_0.authentication import authentication
     from page.auth import auth
     from page.email import email
     from page.routes.admin_page import admin_page
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     app.register_blueprint(email)
     app.register_blueprint(campaigns_api_v1)
     app.register_blueprint(auth)
+    app.register_blueprint(authentication)
     app.register_blueprint(admin_page)
     app.register_blueprint(campaigns)
     app.register_blueprint(dm_page)
