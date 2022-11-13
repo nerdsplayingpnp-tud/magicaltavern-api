@@ -56,6 +56,13 @@ def campaign_not_finished(request: request, campaign_id: int):
     return
 
 
+def campaign_must_be_active(request: request, campaign_id: int):
+    campaign = does_campaign_exist(request, campaign_id)
+    if not campaign.active:
+        abort(409, "The campaign is not active. Player modifications are not allowed.")
+    return
+
+
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
 COMPLEXITY = {"easy": 0, "medium": 1, "hard": 2}
 LENGTH = {"short": 0, "medium": 1, "long": 2}

@@ -9,6 +9,7 @@ from api.v2_0.models import (
     campaign_dm_association,
     does_campaign_exist,
     campaign_not_finished,
+    campaign_must_be_active,
 )
 from api.v2_0.models import dbsql as db
 
@@ -119,6 +120,7 @@ def get_dm_from_campaign(campaign_id):
 )
 def add_player_to_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
+    campaign_must_be_active(request, campaign_id)
     campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     campaign = does_campaign_exist(request, campaign_id)
@@ -137,6 +139,7 @@ def add_player_to_campaign(campaign_id, user_id):
 )
 def remove_player_from_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
+    campaign_must_be_active(request, campaign_id)
     campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     campaign = does_campaign_exist(request, campaign_id)
