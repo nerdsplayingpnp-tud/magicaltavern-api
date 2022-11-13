@@ -3,7 +3,7 @@
 This document will guide you through the Magicaltavern APIs' Usage, available request routes and
 authentication methods.
 
-## Authentication
+## Authenticating
 
 Some API routes and request methods are protected. This means, that to use them, you will
 have to provide an API key in your request.
