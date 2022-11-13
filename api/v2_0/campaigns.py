@@ -7,6 +7,7 @@ from api.v2_0.models import (
     User,
     campaign_player_association,
     campaign_dm_association,
+    does_campaign_exist,
 )
 from api.v2_0.models import dbsql as db
 
@@ -26,7 +27,7 @@ def add_new_campaign():
     new_campaign = Campaign()
     request_json: dict = request.json
     if len(str(request_json)) >= 10000:
-        abort(400, "Request too big.")
+        abort(413, "Request too big.")
     try:
         new_campaign = Campaign(
             name=escape(request_json["name"]),
@@ -69,9 +70,7 @@ def get_singular_campaign(id):
 )
 def get_players_from_campaign(campaign_id):
     abort_if_token_invalid(request)
-    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
-    if not campaign:
-        abort(400, "This Campaign does not exist.")
+    does_campaign_exist(request, campaign_id)
     items = (
         User.query.join(campaign_player_association)
         .join(Campaign)
@@ -94,9 +93,7 @@ def get_players_from_campaign(campaign_id):
 @campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/dm", methods=["GET"])
 def get_dm_from_campaign(campaign_id):
     abort_if_token_invalid(request)
-    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
-    if not campaign:
-        abort(400, "This Campaign does not exist.")
+    does_campaign_exist(request, campaign_id)
     items = (
         User.query.join(campaign_dm_association)
         .join(Campaign)
@@ -122,9 +119,7 @@ def get_dm_from_campaign(campaign_id):
 def add_player_to_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
     user_from_id = ensure_player_exists(user_id)
-    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
-    if not campaign:
-        abort(400, "This Campaign does not exist.")
+    campaign = does_campaign_exist(request, campaign_id)
     if user_from_id in campaign.players:
         abort(409, "The player is already in this campaign.")
     if user_from_id in campaign.dm:
@@ -141,9 +136,7 @@ def add_player_to_campaign(campaign_id, user_id):
 def remove_player_from_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
     user_from_id = ensure_player_exists(user_id)
-    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
-    if not campaign:
-        abort(400, "This Campaign does not exist.")
+    campaign = does_campaign_exist(request, campaign_id)
     if user_from_id not in campaign.players:
         abort(409, "The player is not in this campaign.")
     campaign.players.remove(user_from_id)
@@ -159,9 +152,7 @@ def add_dm_to_campaign(campaign_id, user_id):
     user_from_id = ensure_player_exists(user_id)
     if not user_from_id.is_dm():
         abort(400, "Supplied user lacks access level to be DM of a campaign.")
-    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
-    if not campaign:
-        abort(400, "This Campaign does not exist.")
+    campaign = does_campaign_exist(request, campaign_id)
     if user_from_id in campaign.dm:
         abort(409, "The player is already DM of this campaign.")
     if campaign.dm != []:
@@ -177,11 +168,44 @@ def add_dm_to_campaign(campaign_id, user_id):
 def remove_dm_from_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
     user_from_id = ensure_player_exists(user_id)
-    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
-    if not campaign:
-        abort(400, "This Campaign does not exist.")
+    campaign = does_campaign_exist(request, campaign_id)
     if user_from_id not in campaign.dm:
         abort(409, "The player already isn't DM of this campaign.")
     campaign.dm = []
     db.session.commit()
     return jsonify("Success"), 201
+
+
+@campaigns_api_v2.route(
+    "/api/v2.0/campaigns/<int:campaign_id>/message_id/<int:message_id>", methods=["PUT"]
+)
+def add_message_id_to_campaign(message_id, campaign_id):
+    abort_if_token_invalid(request)
+    campaign = does_campaign_exist(request, campaign_id)
+    campaign.message_id = message_id
+    db.session.commit()
+    return jsonify("Success"), 200
+
+
+@campaigns_api_v2.route(
+    "/api/v2.0/campaigns/<int:campaign_id>/activate", methods=["PUT"]
+)
+def activate_campaign(campaign_id):
+    abort_if_token_invalid()
+    campaign = does_campaign_exist(request, campaign_id)
+    if campaign.active == True:
+        abort(409, "The campaign is already marked as active.")
+    campaign.active = True
+    db.session.commit()
+    return jsonify("Success."), 200
+
+
+@campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/finish", methods=["PUT"])
+def activate_campaign(campaign_id):
+    abort_if_token_invalid()
+    campaign = does_campaign_exist(request, campaign_id)
+    if campaign.finished == True:
+        abort(409, "The campaign is already marked as finished.")
+    campaign.finished = True
+    db.session.commit()
+    return jsonify("Success."), 200

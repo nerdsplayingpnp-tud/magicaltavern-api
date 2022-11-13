@@ -1,6 +1,7 @@
 import sqlalchemy
 
 from sqlalchemy_serializer import SerializerMixin
+from flask import abort, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Column, Table, inspect
 from sqlalchemy.orm import relationship
@@ -39,6 +40,13 @@ def ensure_player_exists(user_id: int):
         dbsql.session.commit()
         return new_user
     return user_exists
+
+
+def does_campaign_exist(request: request, campaign_id: int):
+    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
+    if not campaign:
+        abort(400, "This Campaign does not exist.")
+    return campaign
 
 
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
