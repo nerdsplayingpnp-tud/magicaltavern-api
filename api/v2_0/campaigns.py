@@ -127,6 +127,8 @@ def add_player_to_campaign(campaign_id, user_id):
         abort(400, "This Campaign does not exist.")
     if user_from_id in campaign.players:
         abort(409, "The player is already in this campaign.")
+    if user_from_id in campaign.dm:
+        abort(409, "A DM cannot be player in their own campaign.")
     campaign.players.append(user_from_id)
     db.session.commit()
     return jsonify("Success"), 201
