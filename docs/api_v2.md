@@ -19,6 +19,12 @@ You will receive a `200 - OK` response if you authenticated correctly.
 
 ## Routes
 
+### Authentication
+
+| Route                     | Method | Description                                                                                                                                                                                        | Protected |
+|---------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| /api/v2.0/auth | GET, POST, PUT, DELETE | Check, if your token is valid/if your way of authenticating is correct, as described in [Checking your token](#checking-your-token) | No
+
 ### Campaigns
 
 | Route                     | Method | Description                                                                                                                                                                                        | Protected |
@@ -29,6 +35,7 @@ You will receive a `200 - OK` response if you authenticated correctly.
 | /api/v2.0/campaigns/\<campaign_id>/dm | GET | Get the DM of a campaign. | Yes |
 | /api/v2.0/campaigns/\<campaign_id>/players | GET | Get the players of a campaign. | Yes |
 | /api/v2.0/campaigns/\<campaign_id>/players/add/\<user_id> | PUT | Adds a player to a campaign. If the User associated with the user_id does not exist, a new user with that ID will be created. Returns HTTP Status Code 201 on success and Status Code 409 if the player already exists in this campaign.  | Yes |
+| /api/v2.0/campaigns/\<campaign_id>/players/remove/\<user_id> | PUT | Removes a player from a campaign. If the User associated with the user_id does not exist, a new user with that ID will be created. Returns HTTP Status Code 201 on success and Status Code 409 if the player already doesn't exist in this campaign.  | Yes |
 
 ## PUTting and POSTing Data
 
