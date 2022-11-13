@@ -6,6 +6,7 @@ from api.v2_0.models import (
     ensure_player_exists,
     User,
     campaign_player_association,
+    campaign_dm_association,
 )
 from api.v2_0.models import dbsql as db
 
@@ -68,6 +69,9 @@ def get_singular_campaign(id):
 )
 def get_players_from_campaign(campaign_id):
     abort_if_token_invalid(request)
+    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
+    if not campaign:
+        abort(400, "This Campaign does not exist.")
     items = (
         User.query.join(campaign_player_association)
         .join(Campaign)
@@ -78,18 +82,38 @@ def get_players_from_campaign(campaign_id):
         .all()
     )
     if not items:
-        abort(400, "This Campaign does not exist.")
+        return (jsonify({})), 200
+    returned_dict = {}
+    for item in items:
+        returned_dict[item.id] = item.to_dict()
+        returned_dict[item.id].pop("id")
 
-    return jsonify(items), 200
+    return jsonify(returned_dict), 200
 
 
-""" @campaigns_api_v2.route("/api/v2.0/campaigns/<int:id>/dm", methods=["GET"])
-def get_dm_from_campaign(id):
+@campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/dm", methods=["GET"])
+def get_dm_from_campaign(campaign_id):
     abort_if_token_invalid(request)
-    item = Campaign.query.filter(Campaign.id == id).one_or_none()
-    if not item:
+    campaign = Campaign.query.filter(Campaign.id == campaign_id).one_or_none()
+    if not campaign:
         abort(400, "This Campaign does not exist.")
-    return jsonify(item.to_dict()), 200 """
+    items = (
+        User.query.join(campaign_dm_association)
+        .join(Campaign)
+        .filter(
+            (campaign_dm_association.c.dm == User.id)
+            & (campaign_dm_association.c.campaign == campaign_id)
+        )
+        .all()
+    )
+    if not items:
+        return (jsonify({})), 200
+    returned_dict = {}
+    for item in items:
+        returned_dict[item.id] = item.to_dict()
+        returned_dict[item.id].pop("id")
+
+    return jsonify(returned_dict), 200
 
 
 @campaigns_api_v2.route(
