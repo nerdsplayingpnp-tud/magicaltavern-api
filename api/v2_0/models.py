@@ -49,6 +49,13 @@ def does_campaign_exist(request: request, campaign_id: int):
     return campaign
 
 
+def campaign_not_finished(request: request, campaign_id: int):
+    campaign = does_campaign_exist(request, campaign_id)
+    if campaign.finished:
+        abort(409, "The campaign is finished. Modifications are not allowed.")
+    return
+
+
 ACCESS = {"guest": 0, "user": 1, "DM": 2, "admin": 3}
 COMPLEXITY = {"easy": 0, "medium": 1, "hard": 2}
 LENGTH = {"short": 0, "medium": 1, "long": 2}
@@ -124,7 +131,6 @@ class Campaign(dbsql.Model, SerializerMixin):
     dm = relationship("User", secondary=campaign_dm_association, back_populates="dm_of")
     players_min = dbsql.Column(dbsql.Integer, nullable=False)
     players_max = dbsql.Column(dbsql.Integer, nullable=False)
-    players_count = dbsql.Column(dbsql.Integer)
     players = relationship(
         "User", secondary=campaign_player_association, back_populates="player_in"
     )

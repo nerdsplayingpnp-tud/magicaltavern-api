@@ -8,6 +8,7 @@ from api.v2_0.models import (
     campaign_player_association,
     campaign_dm_association,
     does_campaign_exist,
+    campaign_not_finished,
 )
 from api.v2_0.models import dbsql as db
 
@@ -118,6 +119,7 @@ def get_dm_from_campaign(campaign_id):
 )
 def add_player_to_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
+    campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     campaign = does_campaign_exist(request, campaign_id)
     if user_from_id in campaign.players:
@@ -135,6 +137,7 @@ def add_player_to_campaign(campaign_id, user_id):
 )
 def remove_player_from_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
+    campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     campaign = does_campaign_exist(request, campaign_id)
     if user_from_id not in campaign.players:
@@ -149,6 +152,7 @@ def remove_player_from_campaign(campaign_id, user_id):
 )
 def add_dm_to_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
+    campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     if not user_from_id.is_dm():
         abort(400, "Supplied user lacks access level to be DM of a campaign.")
@@ -167,6 +171,7 @@ def add_dm_to_campaign(campaign_id, user_id):
 )
 def remove_dm_from_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
+    campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     campaign = does_campaign_exist(request, campaign_id)
     if user_from_id not in campaign.dm:
@@ -181,6 +186,7 @@ def remove_dm_from_campaign(campaign_id, user_id):
 )
 def add_message_id_to_campaign(message_id, campaign_id):
     abort_if_token_invalid(request)
+    campaign_not_finished(request, campaign_id)
     campaign = does_campaign_exist(request, campaign_id)
     campaign.message_id = message_id
     db.session.commit()
