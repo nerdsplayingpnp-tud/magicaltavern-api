@@ -32,6 +32,9 @@ You will receive a `200 - OK` response if you authenticated correctly.
 | /api/v2.0/campaigns       | GET    | Returns all stored campaigns, formatted as .json. The `key` in the `key`-`value`-pair is the campaigns' unique ID.                                                                                 | Yes       |
 | /api/v2.0/campaigns       | POST   | Adds a new campaign entry to the database. Data has to be in json-format and located in the request body. The following data needs to be supplied: [Adding a new Campaign](#adding-a-new-campaign) |Yes        |
 | /api/v2.0/campaigns/\<campaign_id> | GET    | Returns the campaign which's `key` matches the supplied `id`, formatted as .json.                                                                                                                  | Yes       |
+| /api/v2.0/campaigns/\<campaign_id>/activate | PUT | Marks the campaign as active. This means, that player enrollments via the `/api/v2.0/campaigns/\<campaign_id>/players/add/\<user_id>` route will no longer be accepted. An 'active' campaign means, that the campaign has been created, that player enrollment has concluded, and that the campaign is not yet finished (=last session has not concluded).                                                                                                               | Yes       |
+| /api/v2.0/campaigns/\<campaign_id>/finish | PUT | Marks the campaign as finished. A finished campaign can no longer be modified (read-only). A campaign is intended to be marked as finished, once the last session of the campaign has concluded.                                                                                                              | Yes       |
+| /api/v2.0/campaigns/\<campaign_id>/message_id/\<message_id> | PUT | Sets the message_id attribute of a campaign. Using this attribute, one can keep track of messages sent by the Discord Bot API Endpoint. This is useful for later editing or deletion of a message.                                                                                                               | Yes       |
 | /api/v2.0/campaigns/\<campaign_id>/dm | GET | Get the DM of a campaign. | Yes |
 | /api/v2.0/campaigns/\<campaign_id>/dm/add/\<user_id> | PUT | Adds a dm to a campaign. If the User associated with the user_id does not exist, a new user with that ID will be created. Returns HTTP Status Code 201 on success and Status Code 409 if the player already dms this campaign or if the campaign already has a dm.  | Yes |
 | /api/v2.0/campaigns/\<campaign_id>/dm/remove/\<user_id> | PUT | Removes a dm from a campaign. If the User associated with the user_id does not exist, a new user with that ID will be created. Returns HTTP Status Code 201 on success and Status Code 409 if the player already doesn't exist in this campaign.  | Yes |
@@ -95,3 +98,12 @@ An integer value, ranging from 0-2
 
 **image_url**  
 The image URL has to be a direct link to an image.
+
+#### Post-creation
+
+After the campaign has been created, it is recommended to also do the following things, in order:  
+
+1. If a message has been sent by the Discord Bot endpoint (for example to advertise the newly created campaign), set the `message_id` attribute using the corresponding [route](#campaigns).
+2. Set the DM attribute, as documented under the campaign routes.
+3. If enrollment has concluded/the campaign is full, provide an option to mark the campaign as active.
+4. Do not forget to provide an option to mark the campaign as finished.
