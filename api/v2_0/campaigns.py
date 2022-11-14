@@ -128,6 +128,8 @@ def add_player_to_campaign(campaign_id, user_id):
         abort(409, "The player is already in this campaign.")
     if user_from_id in campaign.dm:
         abort(409, "A DM cannot be player in their own campaign.")
+    if len(campaign.players) >= campaign.players_max:
+        abort(409, "The campaign is full.")
     campaign.players.append(user_from_id)
     db.session.commit()
     return jsonify("Success"), 201
@@ -210,7 +212,7 @@ def activate_campaign(campaign_id):
 
 
 @campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/finish", methods=["PUT"])
-def activate_campaign(campaign_id):
+def finish_campaign(campaign_id):
     abort_if_token_invalid()
     campaign = does_campaign_exist(request, campaign_id)
     if campaign.finished == True:
