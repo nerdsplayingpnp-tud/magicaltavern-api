@@ -47,6 +47,7 @@ if __name__ == "__main__":
     from api.v1_0.campaigns import campaigns_api_v1
     from api.v2_0.campaigns import campaigns_api_v2
     from api.v2_0.authentication import authentication
+    from api.v2_0.users import users
     from page.auth import auth
     from page.routes.admin_page import admin_page
     from page.routes.campaigns import campaigns
@@ -66,6 +67,7 @@ if __name__ == "__main__":
     app.register_blueprint(index_page)
     app.register_blueprint(mentor)
     app.register_blueprint(profile)
+    app.register_blueprint(users)
     app.register_blueprint(message_keys)
     app.register_blueprint(campaigns_api_v2)
 
