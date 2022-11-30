@@ -3,7 +3,6 @@ from pathlib import Path
 
 from flask import Flask
 from flask_login import LoginManager
-from flask_mail import Mail
 
 from api.v1_0.message_keys import message_keys
 from app_configurator import configure
@@ -19,7 +18,6 @@ app = Flask(
 # Register the blueprint in api/v1_0/campaigns.py
 app = configure(app)  # Done to hide
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db/db.sqlite"
-mail = Mail(app)
 db.init_app(app)
 
 login_manager = LoginManager()
