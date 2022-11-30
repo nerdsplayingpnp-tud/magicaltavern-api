@@ -1,5 +1,5 @@
 import bleach
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, escape
 from api.v2_0.authentication import abort_if_token_invalid
 from api.v2_0.models import (
     User,
@@ -9,6 +9,7 @@ from api.v2_0.models import (
     campaign_player_association,
     campaign_dm_association,
     Campaign,
+    ACCESS,
 )
 from api.v2_0.models import dbsql as db
 
@@ -77,3 +78,18 @@ def get_campaigns_where_dm(user_id):
 def delete_user(user_id):
     abort_if_token_invalid(request)
     # TODO: Implement
+
+
+@users.route(
+    "/api/v2.0/users/<int:user_id>/modify_access/<int:access_level>/", methods=["PUT"]
+)
+def update_access_level(user_id, access_level):
+    abort_if_token_invalid(request)
+    if int(escape(access_level)) not in ACCESS.values():
+        abort(
+            400, "Invalid Access Level. Valid access values are integers from 0 to 3."
+        )
+    user = ensure_player_exists(escape(user_id))
+    user.access = access_level
+    db.session.commit()
+    return (jsonify("Success.")), 200
