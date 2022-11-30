@@ -37,7 +37,10 @@ def callback():
     return redirect("/profile")
 
 
-@auth.route("/profile")
+@auth.route(
+    "/profile"
+)  # Please comment this out and replace it with a route in page/routes.
+# This is only for debug/development purposes.
 def profile():
     user = requires_authorization(discord)
     return f"""
