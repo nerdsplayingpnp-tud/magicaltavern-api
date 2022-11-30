@@ -1,5 +1,5 @@
 import bleach
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, escape
 from api.v2_0.authentication import abort_if_token_invalid
 from api.v2_0.models import (
     table_to_dict,
@@ -35,19 +35,19 @@ def add_new_campaign():
         new_campaign = Campaign(
             name=bleach.clean(request_json["name"]),
             description=bleach.clean(request_json["description"]),
-            players_min=bleach.clean(request_json["players_min"]),
-            players_max=bleach.clean(request_json["players_max"]),
-            complexity=bleach.clean(request_json["complexity"]),
+            players_min=escape(request_json["players_min"]),
+            players_max=escape(request_json["players_max"]),
+            complexity=escape(request_json["complexity"]),
             place=bleach.clean(request_json["place"]),
             time=bleach.clean(request_json["time"]),
             content_warnings=bleach.clean(request_json["content_warnings"]),
-            ruleset=bleach.clean(request_json["ruleset"]),
-            campaign_length=bleach.clean(request_json["campaign_length"]),
-            language=bleach.clean(request_json["language"]),
+            ruleset=escape(request_json["ruleset"]),
+            campaign_length=escape(request_json["campaign_length"]),
+            language=escape(request_json["language"]),
             character_creation=bleach.clean(request_json["character_creation"]),
             briefing=bleach.clean(request_json["briefing"]),
             notes=bleach.clean(request_json["notes"]),
-            image_url=bleach.clean(request_json.get("image_url")),
+            image_url=escape(request_json.get("image_url")),
         )
         db.session.add(new_campaign)
         db.session.commit()
