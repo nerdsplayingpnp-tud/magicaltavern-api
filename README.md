@@ -134,7 +134,24 @@ To get a local development environment up and running, follow these steps.
    ```
 
 4. Add an API key to the database. See [the API documentation](./docs/api_v2.md).
-5. Fill in all fields in `app_configurator.py`
+5. Create the file `${PROJECTDIR}/app_configurator.py` using the following template:
+
+    ```py
+    from flask import Flask
+
+    # Fill in these values with the required settings
+
+
+    def configure(app: Flask) -> Flask:
+        app.config[
+            "SECRET_KEY"
+        ] = ""
+        app.config["DISCORD_CLIENT_ID"] = 
+        app.config["DISCORD_CLIENT_SECRET"] = ""
+        app.config["DISCORD_REDIRECT_URI"] = "http://127.0.0.1:7777/callback"
+        return app
+    ```  
+
 6. Start the development environment with
 
    ```sh
