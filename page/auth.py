@@ -34,11 +34,11 @@ def callback():
     user_database = ensure_player_exists(user_discord.id)
     user_database.name = bleach.clean(user_discord.name)
     db.session.commit()
-    return redirect("/me")
+    return redirect("/profile")
 
 
-@auth.route("/me")
-def me():
+@auth.route("/profile")
+def profile():
     user = requires_authorization(discord)
     return f"""
 <html>
