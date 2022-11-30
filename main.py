@@ -1,7 +1,8 @@
-import json, uuid
+import json, os
 from pathlib import Path
 
 from flask import Flask
+from flask_discord import DiscordOAuth2Session, requires_authorization, Unauthorized
 from flask_login import LoginManager
 
 from api.v1_0.message_keys import message_keys
@@ -18,7 +19,10 @@ app = Flask(
 # Register the blueprint in api/v1_0/campaigns.py
 app = configure(app)  # Done to hide
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db/db.sqlite"
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "true"  # ONLY IN DEVELOPMENT ENVIRONMENT
 db.init_app(app)
+
+discord = DiscordOAuth2Session(app)
 
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
@@ -44,7 +48,6 @@ if __name__ == "__main__":
     from api.v2_0.campaigns import campaigns_api_v2
     from api.v2_0.authentication import authentication
     from page.auth import auth
-    from page.email import email
     from page.routes.admin_page import admin_page
     from page.routes.campaigns import campaigns
     from page.routes.dm_page import dm_page
@@ -53,7 +56,6 @@ if __name__ == "__main__":
     from page.routes.mentor import mentor
     from page.routes.profile import profile
 
-    app.register_blueprint(email)
     app.register_blueprint(campaigns_api_v1)
     app.register_blueprint(auth)
     app.register_blueprint(authentication)
