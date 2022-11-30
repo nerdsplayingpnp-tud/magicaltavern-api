@@ -6,7 +6,15 @@ authentication methods.
 ## Authenticating
 
 Some API routes and request methods are protected. This means, that to use them, you will
-have to provide an API key in your request.
+have to provide an API key in your request. There currently is no way to generate a new key. You
+will have to use a database viewing tool to open `{$PROJECTDIR}/data/db/db.sqlite` and manually
+insert a new key in the `devices`-table. The following parameters need to be filled out:
+
+- id: The primary key. A unique integer.
+- key: The actual token. Must be unique, and should be URL-safe. UUIDs recommended.
+- name: An identifier for the token. Can be anything you'd like.
+
+As a database browsing tool, I recommend [DB Browser for SQLite (Linux, macOS, Windows)](https://sqlitebrowser.org/dl/)
 
 ### Properly authenticating
 
