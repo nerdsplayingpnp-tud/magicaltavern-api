@@ -212,7 +212,7 @@ def get_message_id_from_campaign(campaign_id):
     "/api/v2.0/campaigns/<int:campaign_id>/activate", methods=["PUT"]
 )
 def activate_campaign(campaign_id):
-    abort_if_token_invalid()
+    abort_if_token_invalid(request)
     campaign = does_campaign_exist(request, campaign_id)
     if campaign.active == True:
         abort(409, "The campaign is already marked as active.")
@@ -223,10 +223,23 @@ def activate_campaign(campaign_id):
 
 @campaigns_api_v2.route("/api/v2.0/campaigns/<int:campaign_id>/finish", methods=["PUT"])
 def finish_campaign(campaign_id):
-    abort_if_token_invalid()
+    abort_if_token_invalid(request)
     campaign = does_campaign_exist(request, campaign_id)
     if campaign.finished == True:
         abort(409, "The campaign is already marked as finished.")
     campaign.finished = True
     db.session.commit()
     return jsonify("Success."), 200
+
+
+@campaigns_api_v2.route(
+    "/api/v2.0/campaigns/from_message_id/<int:message_id>", methods=["GET"]
+)
+def get_campaign_id_from_message_id(message_id):
+    abort_if_token_invalid(request)
+    campaign_from_id = Campaign.query.filter(
+        Campaign.message_id == message_id
+    ).one_or_none()
+    if not campaign_from_id:
+        abort(400, "This Campaign does not exist.")
+    return jsonify(campaign_from_id.id), 200
