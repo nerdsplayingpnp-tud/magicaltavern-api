@@ -200,6 +200,15 @@ def add_message_id_to_campaign(message_id, campaign_id):
 
 
 @campaigns_api_v2.route(
+    "/api/v2.0/campaigns/<int:campaign_id>/message_id/", methods=["GET"]
+)
+def get_message_id_from_campaign(campaign_id):
+    abort_if_token_invalid(request)
+    campaign = does_campaign_exist(request, campaign_id)
+    return jsonify(campaign.message_id), 200
+
+
+@campaigns_api_v2.route(
     "/api/v2.0/campaigns/<int:campaign_id>/activate", methods=["PUT"]
 )
 def activate_campaign(campaign_id):
