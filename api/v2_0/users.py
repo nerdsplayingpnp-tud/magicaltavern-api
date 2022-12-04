@@ -69,7 +69,6 @@ def get_campaigns_where_dm(user_id):
     returned_dict = {}
     for item in items:
         returned_dict[item.id] = item.to_dict()
-        returned_dict[item.id].pop("id")
 
     return jsonify(returned_dict), 200
 

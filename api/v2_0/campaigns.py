@@ -161,7 +161,8 @@ def add_dm_to_campaign(campaign_id, user_id):
     campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
     if not user_from_id.is_dm():
-        abort(400, "Supplied user lacks access level to be DM of a campaign.")
+        user_from_id.access = 2
+        db.session.commit()
     campaign = does_campaign_exist(request, campaign_id)
     if user_from_id in campaign.dm:
         abort(409, "The player is already DM of this campaign.")
@@ -188,7 +189,8 @@ def remove_dm_from_campaign(campaign_id, user_id):
 
 
 @campaigns_api_v2.route(
-    "/api/v2.0/campaigns/<int:campaign_id>/message_id/<int:message_id>", methods=["PUT"]
+    "/api/v2.0/campaigns/<int:campaign_id>/message_id/<int:message_id>",
+    methods=["POST", "PUT"],
 )
 def add_message_id_to_campaign(message_id, campaign_id):
     abort_if_token_invalid(request)

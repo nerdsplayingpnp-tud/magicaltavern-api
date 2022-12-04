@@ -126,7 +126,7 @@ class Ruleset(dbsql.Model, SerializerMixin):
     serialize_rules = ("-used_by",)
     id = dbsql.Column(dbsql.Integer, primary_key=True)
     ruleset = dbsql.Column(dbsql.String)
-    used_by = relationship("Campaign")
+    # used_by = relationship("Campaign")
 
 
 class Campaign(dbsql.Model, SerializerMixin):
@@ -146,6 +146,7 @@ class Campaign(dbsql.Model, SerializerMixin):
     complexity = dbsql.Column(dbsql.Integer, nullable=False)
     place = dbsql.Column(dbsql.Integer, nullable=False)
     time = dbsql.Column(dbsql.String, nullable=False)
+    ruleset = dbsql.Column(dbsql.String, nullable=False)
     content_warnings = dbsql.Column(dbsql.String, nullable=False)
     complexity = dbsql.Column(dbsql.Integer, nullable=False)
     campaign_length = dbsql.Column(dbsql.Integer, nullable=False)
