@@ -120,8 +120,10 @@ class MentorProgramm(dbsql.Model):
     language = dbsql.Column(dbsql.String)
 
 
-class Ruleset(dbsql.Model):
+# Ruleset class does not get used for now. Do not delete though, in case we want to work with it in the future.
+class Ruleset(dbsql.Model, SerializerMixin):
     __tablename__ = "ruleset"
+    serialize_rules = ("-used_by",)
     id = dbsql.Column(dbsql.Integer, primary_key=True)
     ruleset = dbsql.Column(dbsql.String)
     used_by = relationship("Campaign")
@@ -145,7 +147,7 @@ class Campaign(dbsql.Model, SerializerMixin):
     place = dbsql.Column(dbsql.Integer, nullable=False)
     time = dbsql.Column(dbsql.String, nullable=False)
     content_warnings = dbsql.Column(dbsql.String, nullable=False)
-    ruleset = dbsql.Column(dbsql.Integer, ForeignKey("ruleset.id"), nullable=False)
+    complexity = dbsql.Column(dbsql.Integer, nullable=False)
     campaign_length = dbsql.Column(dbsql.Integer, nullable=False)
     language = dbsql.Column(dbsql.Integer, nullable=False)
     character_creation = dbsql.Column(dbsql.String, nullable=False)

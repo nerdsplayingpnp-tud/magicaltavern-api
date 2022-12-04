@@ -11,7 +11,7 @@ from api.v2_0.models import dbsql as db
 rulesets = Blueprint("rulesets", __name__)
 
 
-@rulesets.route("/api/v2.0/rulesets/add/", methods=["GET"])
+@rulesets.route("/api/v2.0/rulesets/add/", methods=["POST"])
 def create_ruleset():
     abort_if_token_invalid(request)
     request_json: dict = request.json
