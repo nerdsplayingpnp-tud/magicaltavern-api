@@ -144,7 +144,7 @@ class Campaign(dbsql.Model, SerializerMixin):
         "User", secondary=campaign_player_association, back_populates="player_in"
     )
     complexity = dbsql.Column(dbsql.Integer, nullable=False)
-    place = dbsql.Column(dbsql.Integer, nullable=False)
+    place = dbsql.Column(dbsql.String, nullable=False)
     time = dbsql.Column(dbsql.String, nullable=False)
     ruleset = dbsql.Column(dbsql.String, nullable=False)
     content_warnings = dbsql.Column(dbsql.String, nullable=False)
