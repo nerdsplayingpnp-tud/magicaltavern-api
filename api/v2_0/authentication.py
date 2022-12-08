@@ -26,12 +26,11 @@ def create_token(name: str) -> str:
     """
     if name != None and name != "":
         with app.app_context():
-            devices = Devices.query.all()
-            for device in devices:
-                if device.name == name:
-                    return logging.error(
-                        "Specified name-attribute is already present in the database. Duplicates are not allowed. Aborted."
-                    )
+            devices = Devices.query.filter(Devices.name == name).one_or_none()
+            if devices is not None:
+                return logging.error(
+                    "Specified name-attribute is already present in the database. Duplicates are not allowed. Aborted."
+                )
     else:
         logging.error("name-attribute cannot be empty.")
     key = str(uuid.uuid4().hex)
@@ -53,9 +52,7 @@ def abort_if_token_invalid(request: request) -> None:
         None: This function either terminated by returning NoneType if the request has a valid API
         Token in its' header, or by aborting the request with an HTTP 401 status code.
     """
-    if request_has_valid_token(request):
-        return None
-    else:
+    if not request_has_valid_token(request):
         abort(401)
 
 
@@ -69,9 +66,9 @@ def request_has_valid_token(request: request) -> bool:
     Returns:
         bool: True, if the token has been verified to be valid.. False, if not.
     """
-    if request.headers.get("token") and __validate_token(request.headers.get("token")):
-        return True
-    return False
+    return request.headers.get("token") and __validate_token(
+        request.headers.get("token")
+    )
 
 
 def __validate_token(token: str) -> bool:
@@ -85,12 +82,10 @@ def __validate_token(token: str) -> bool:
     """
     if token != None and token != "":
         with app.app_context():
-            tokens = Devices.query.all()
-        for dbtoken in tokens:
-            if dbtoken.key == token:
-                return True
-        return False
-    return False
+            token_exists_in_db = Devices.query.filter(
+                token == Devices.key
+            ).one_or_none()
+            return token_exists_in_db is not None
 
 
 def remove_token(name: str = None):

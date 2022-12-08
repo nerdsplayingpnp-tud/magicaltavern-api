@@ -56,6 +56,8 @@ def add_new_campaign():
             400,
             "Your request does not contain all required values. Please, consult the API documentation.",
         )
+    except Exception:
+        abort(500)
     return jsonify(new_campaign.id), 200
 
 
@@ -158,15 +160,15 @@ def add_dm_to_campaign(campaign_id, user_id):
     abort_if_token_invalid(request)
     campaign_not_finished(request, campaign_id)
     user_from_id = ensure_player_exists(user_id)
-    if not user_from_id.is_dm():
-        user_from_id.access = 2
-        db.session.commit()
     campaign = does_campaign_exist(request, campaign_id)
     if user_from_id in campaign.dm:
         abort(409, "The player is already DM of this campaign.")
     if campaign.dm != []:
         abort(409, "The campaign already has a DM.")
     campaign.dm = [user_from_id]
+    # Makes the user a DM, if it isn't already
+    if not user_from_id.is_dm():
+        user_from_id.access = 2
     db.session.commit()
     return jsonify("Success"), 201
 
@@ -209,14 +211,14 @@ def get_message_id_from_campaign(campaign_id):
 
 
 @campaigns_api_v2.route(
-    "/api/v2.0/campaigns/<int:campaign_id>/activate", methods=["PUT"]
+    "/api/v2.0/campaigns/<int:campaign_id>/allow_enrollment", methods=["PUT"]
 )
 def activate_campaign(campaign_id):
     abort_if_token_invalid(request)
     campaign = does_campaign_exist(request, campaign_id)
-    if campaign.active == True:
-        abort(409, "The campaign is already marked as active.")
-    campaign.active = True
+    if campaign.allow_enrollment == True:
+        abort(409, "The enrollment of this campaign is already marked as active.")
+    campaign.allow_enrollment = True
     db.session.commit()
     return jsonify("Success."), 200
 

@@ -156,12 +156,12 @@ class Campaign(dbsql.Model, SerializerMixin):
     notes = dbsql.Column(dbsql.String, nullable=False)
     image_url = dbsql.Column(dbsql.String)
     message_id = dbsql.Column(dbsql.Integer, unique=True)
-    active = dbsql.Column(dbsql.Boolean, default=False, nullable=False)
+    allow_enrollment = dbsql.Column(dbsql.Boolean, default=False, nullable=False)
     finished = dbsql.Column(dbsql.Boolean, default=False, nullable=False)
 
 
 class Devices(dbsql.Model):
     __tablename__ = "devices"
     id = dbsql.Column(dbsql.Integer, primary_key=True)
-    key = dbsql.Column(dbsql.String)
-    name = dbsql.Column(dbsql.String)
+    key = dbsql.Column(dbsql.String, unique=True, nullable=False)
+    name = dbsql.Column(dbsql.String, unique=True, nullable=False)

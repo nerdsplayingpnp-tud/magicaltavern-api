@@ -20,8 +20,6 @@ users = Blueprint("users", __name__)
 def get_all_users():
     abort_if_token_invalid(request)
     users = table_to_dict(User)
-    for user in users:
-        users[user].pop("id")
     return jsonify(users)
 
 
@@ -32,7 +30,6 @@ def get_singular_user(id):
     if not item:
         abort(400, "This User does not exist.")
     item = item.to_dict()
-    item.pop("id")
     return jsonify(item), 200
 
 
@@ -50,7 +47,6 @@ def get_campaigns_where_player(user_id):
     returned_dict = {}
     for item in items:
         returned_dict[item.id] = item.to_dict()
-        returned_dict[item.id].pop("id")
 
     return jsonify(returned_dict), 200
 
@@ -71,12 +67,6 @@ def get_campaigns_where_dm(user_id):
         returned_dict[item.id] = item.to_dict()
 
     return jsonify(returned_dict), 200
-
-
-@users.route("/api/v2.0/users/<int:user_id>/", methods=["DELETE"])
-def delete_user(user_id):
-    abort_if_token_invalid(request)
-    # TODO: Implement
 
 
 @users.route(
