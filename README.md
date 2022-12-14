@@ -21,7 +21,6 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
 <br />
@@ -33,13 +32,11 @@
 <h3 align="center">magicaltavern web</h3>
 
   <p align="center">
-    This repository provides a JSON-based database handler, a RESTful API for use with magicaltavern-bot or your own implementations of a magicaltavern-web-endpoint, and last but not least a website for the magicaltavern service, with which users can enroll into Pen and Paper campaigns.
+    This repository provides an SQLite database, a RESTful API for use with magicaltavern-bot or your own implementations of a magicaltavern-web-client, and last but not least a website for the magicaltavern service, with which users can enroll into Pen and Paper campaigns.
     <br />
-    <a href="https://github.com/bitfl0wer/magicaltavern-web"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/bitfl0wer/magicaltavern-web/wiki"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/bitfl0wer/magicaltavern-web">View Demo</a>
-    ·
     <a href="https://github.com/bitfl0wer/magicaltavern-web/issues">Report Bug</a>
     ·
     <a href="https://github.com/bitfl0wer/magicaltavern-web/issues">Request Feature</a>
@@ -85,6 +82,9 @@ This repository provides a JSON-based database handler, a RESTful API for use wi
 
 * Python 3.9
 * Flask
+* SQLAlchemy
+* SQLite
+* SQLAlchemy-serializer
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -139,8 +139,6 @@ To get a local development environment up and running, follow these steps.
     ```py
     from flask import Flask
 
-    # Fill in these values with the required settings
-
 
     def configure(app: Flask) -> Flask:
         app.config[
@@ -151,6 +149,8 @@ To get a local development environment up and running, follow these steps.
         app.config["DISCORD_REDIRECT_URI"] = "http://127.0.0.1:7777/callback"
         return app
     ```  
+
+    Fill in the value `SECRET_KEY` and add the ID and Client Secret of a Discord Application that you plan to use for the project.
 
 6. Start the development environment with
 
@@ -165,7 +165,7 @@ To get a local development environment up and running, follow these steps.
 
 WIP!
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://github.com/bitfl0wer/magicaltavern-web/wiki)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -218,9 +218,11 @@ Project Link: [https://github.com/bitfl0wer/magicaltavern-web](https://github.co
 ## Acknowledgments
 
 * [Fugi](https://github.com/FugiMuffi)
-  * Added Dockerfile and corresponding configuration for easy Docker Deploy functionality!
+  * Added Dockerfile and corresponding configuration for easy Docker Deploy functionality! Also reviewed my code on the big rewrite :)
 * [SaltyOne](https://github.com/Juhi838b)
   * Is currently working on all website related issues, and is a second project maintainer. ❤️
+* [Casey](https://github.com/KreerC)
+  * Reviewed my pull request and suggested changes! Thanks, casey! :>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -236,5 +238,3 @@ Project Link: [https://github.com/bitfl0wer/magicaltavern-web](https://github.co
 [issues-url]: https://github.com/bitfl0wer/magicaltavern-web/issues
 [license-shield]: https://img.shields.io/github/license/bitfl0wer/magicaltavern-web.svg?style=for-the-badge
 [license-url]: https://github.com/bitfl0wer/magicaltavern-web/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/N/A
