@@ -26,7 +26,7 @@
 <br />
 <div align="center">
 
-<h3 align="center">magicaltavern web</h3>
+<h3 align="center">magicaltavern api</h3>
 
   <p align="center">
     This repository provides an SQLite database, a RESTful API for use with magicaltavern-bot or your own implementations of a magicaltavern-web-client, and last but not least a website for the magicaltavern service, with which users can enroll into Pen and Paper campaigns.
