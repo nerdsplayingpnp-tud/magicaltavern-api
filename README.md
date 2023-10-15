@@ -123,13 +123,13 @@ Project Link: [https://github.com/bitfl0wer/magicaltavern-web](https://github.co
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/bitfl0wer/magicaltavern-web.svg?style=plastic
+[contributors-shield]: https://img.shields.io/github/contributors/bitfl0wer/magicaltavern-web.svg
 [contributors-url]: https://github.com/bitfl0wer/magicaltavern-web/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/bitfl0wer/magicaltavern-web.svg?style=plastic
+[forks-shield]: https://img.shields.io/github/forks/bitfl0wer/magicaltavern-web.svg
 [forks-url]: https://github.com/bitfl0wer/magicaltavern-web/network/members
-[stars-shield]: https://img.shields.io/github/stars/bitfl0wer/magicaltavern-web.svg?style=plastic
+[stars-shield]: https://img.shields.io/github/stars/bitfl0wer/magicaltavern-web.svg
 [stars-url]: https://github.com/bitfl0wer/magicaltavern-web/stargazers
-[issues-shield]: https://img.shields.io/github/issues/bitfl0wer/magicaltavern-web.svg?style=plastic
+[issues-shield]: https://img.shields.io/github/issues/bitfl0wer/magicaltavern-web.svg
 [issues-url]: https://github.com/bitfl0wer/magicaltavern-web/issues
-[license-shield]: https://img.shields.io/github/license/bitfl0wer/magicaltavern-web.svg?style=plastic
+[license-shield]: https://img.shields.io/github/license/bitfl0wer/magicaltavern-web.svg
 [license-url]: https://github.com/bitfl0wer/magicaltavern-web/blob/master/LICENSE.txt
