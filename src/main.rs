@@ -46,7 +46,7 @@ struct Args {
     workers: u16,
 
     #[arg(short = 'u', long)]
-    database_url: String,
+    database_url: Option<String>,
 
     #[arg(short, long, default_value_t = DatabaseType::SQLite)]
     database_type: DatabaseType,
