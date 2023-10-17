@@ -80,6 +80,10 @@ To get a local development environment up and running, follow these steps.
    ```sh
    cargo run
    ```
+3. If you'd like to change the database model, you'll have to do database migrations. To be able to do so, install `sea-orm-cli`
+    ```
+    cargo install sea-orm-cli
+    ```
 
 <!-- CONTRIBUTING -->
 ## Contributing
