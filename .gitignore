@@ -57,3 +57,4 @@ Temporary Items
 # Added by cargo
 
 /target
+/migration/target
