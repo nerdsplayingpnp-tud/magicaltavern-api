@@ -36,7 +36,7 @@ impl ValueEnum for DatabaseType {
 
 /// magicaltavern API Server.
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about)]
 struct Args {
     #[arg(short, long, default_value_t = 8080)]
     port: u16,
@@ -61,7 +61,7 @@ async fn hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     let args = Args::parse();
     println!(
-        "Starting magicaltavern-api with {} workers on port {}",
+        "Starting magicaltavern-api with {} workers on port {}. Press CTRL+C to exit.",
         args.workers, args.port
     );
     HttpServer::new(|| App::new().service(hello))
