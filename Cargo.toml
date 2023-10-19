@@ -10,3 +10,9 @@ actix-web = { version = "4.4.0", features = ["rustls"] }
 clap = { version = "4.4.6", features = ["derive"] }
 num_cpus = "1.16.0"
 sqlx = { version = "0.7.2", features = ["runtime-tokio"] }
+
+[profile.release]
+strip = true
+opt-level = 3     # Set to "s" or "z" to optimize for build size, or "3" for speed.
+lto = true
+codegen-units = 1
